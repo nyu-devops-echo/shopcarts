@@ -10,7 +10,14 @@ class Product(object):
             - description
         - Model should only initially include init method and product fields.
     """ 
-    def __init__(self, id, name, price, description=None):
+    
+    __data = []
+    __index = 0
+
+    def __init__(self, id=0, name='', price=0.0, description=None):
+        """
+        Initializing Product
+        """
         self.id = int(id)
         self.name = name
         self.price = float(price)
