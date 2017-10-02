@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
     pip3 install -U pip
     apt-get -y autoremove
     # Install app dependencies
-    # cd /vagrant
-    # sudo pip install -r requirements.txt
+    cd /vagrant
+    sudo pip install -r requirements.txt
   SHELL
 end
