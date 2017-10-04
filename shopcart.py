@@ -1,0 +1,27 @@
+class Shopcart(object):
+
+    """
+    This is model for the shop carts
+    Assumptions:
+        - In memory persistence
+        - The fields of a shopcart include:
+            - user id
+            - list of products (product id, quantity of product )
+        - The total price of the shopcart will be dynamically calculated
+        - Model should only initially include `init` method and shopcart fields
+
+    """
+
+    __data = []
+    __index = 0
+
+    __products = dict()
+
+    def __init__(self, uid=0, products=None):
+        """
+        :param uid: user id
+        :param products: dict of products <products id, quantity of product>
+        """
+
+        self.uid = int(uid)
+        self.products = products
