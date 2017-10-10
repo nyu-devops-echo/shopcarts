@@ -1,5 +1,7 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
+from flask_api import status
+
 app = Flask(__name__)
 
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
@@ -7,7 +9,7 @@ PORT = os.getenv('PORT', '5000')
 
 @app.route("/")
 def home():
-    return "Home"
+    return jsonify("Home"), status.HTTP_200_OK
 
 
 if __name__ == "__main__":
