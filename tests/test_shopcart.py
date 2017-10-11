@@ -20,7 +20,7 @@ class TestShopcart(unittest.TestCase):
         cart = Shopcart(1,[])
         cart.save()
         items = Shopcart.all()
-        
+
         self.assertEqual(len(items), 1)
 
 if __name__ == '__main__':
