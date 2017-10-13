@@ -17,14 +17,14 @@ class Shopcart(object):
 
     __products = dict()
 
-    def __init__(self, uid=0, products=[]):
+    def __init__(self, uid=0, products=None):
         """
         :param uid: user id
         :param products: dict of products <products id, quantity of product>
         """
 
         self.uid = int(uid)
-        self.products = products
+        self.products = products if products else []
 
     def save(self):
         """ Saves a Shopcart in the database """
