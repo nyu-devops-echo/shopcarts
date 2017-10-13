@@ -24,4 +24,18 @@ class Shopcart(object):
         """
 
         self.uid = int(uid)
-        self.products = products
+        self.products = products if products else []
+
+    def save(self):
+        """ Saves a Shopcart in the database """
+        Shopcart.__data.append(self)
+
+    @staticmethod
+    def all():
+        """ Query that returns all Shopcarts """
+        return Shopcart.__data
+
+    @staticmethod
+    def remove_all():
+        """ Remove all Shopcarts from memory """
+        Shopcart.__data = []
