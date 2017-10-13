@@ -17,7 +17,7 @@ class Shopcart(object):
 
     __products = dict()
 
-    def __init__(self, uid=0, products=None):
+    def __init__(self, uid=0, products=[]):
         """
         :param uid: user id
         :param products: dict of products <products id, quantity of product>
