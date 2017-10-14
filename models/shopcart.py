@@ -18,8 +18,11 @@ class Shopcart(object):
         :param products: dict of products <products id, quantity of product>
         """
         self.uid = int(uid)
-        self.products = self.__validate_products(products)
-        
+        try:
+            self.products = self.__validate_products(products)
+        except DataValidationError as e:
+            print('ERROR: Data Validation error' +e.args[0])           
+
     def save(self):
         """ Saves a Shopcart in the database """
         Shopcart.__data.append(self)
@@ -27,7 +30,11 @@ class Shopcart(object):
     def add_product(self, pid, quant=1):
         """ Adds a tuple of product, quantity to the product dict """
         pq_tup = (pid,quant)
-        self.products.update( self.__validate_products(pq_tup) )
+        try:
+            self.products.update( self.__validate_products(pq_tup) )
+        except DataValidationError as e:
+            print('ERROR: Data Validation error' +e.args[0])
+
 
     @staticmethod
     def all():
@@ -42,32 +49,26 @@ class Shopcart(object):
     @staticmethod
     def __validate_products(products):
         """ Validates products or raises an error"""
-        try:
-            # Product is none so set an empty list
-            if products is None:
-                return {}
-            
-            #Not None
-            # Tuple of product, quantity 
-            if type(products) == tuple  and len(products)==2 and all(isinstance(pq,int) for pq in products): 
-                return {products[0]:products[1]}
+        # Product is none so set an empty list
+        if products is None:
+            return {}
 
-            # Just a Product id, set default quantity to 1
-            if type(products) == int: 
-                return {products:1}
+        #Not None
+        # Tuple of product, quantity 
+        if type(products) == tuple  and len(products)==2 and all(isinstance(pq,int) for pq in products): 
+            return {products[0]:products[1]}
 
-            if type(products) != dict : 
-                raise DataValidationError("Invalid format for products")
+        # Just a Product id, set default quantity to 1
+        if type(products) == int: 
+            return {products:1}
 
-            
-            # Products is a dict of proper tuples
-            if ( all( isinstance(pid,int) for pid in products.keys() ) and
-                 all( (isinstance(q,int) and (q > 0)) for q in products.values() ) ):
-                return products
-
-            #Products not valid
+        if type(products) != dict : 
             raise DataValidationError("Invalid format for products")
 
-        except DataValidationError as e:
-            print('ERROR: Data Validation error' +e.args[0])
-            return {}
+        # Products is a dict of proper tuples
+        if ( all( isinstance(pid,int) for pid in products.keys() ) and
+             all( (isinstance(q,int) and (q > 0)) for q in products.values() ) ):
+            return products
+
+        #Products not valid
+        raise DataValidationError("Invalid format for products")
