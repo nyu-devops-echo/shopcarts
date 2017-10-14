@@ -131,5 +131,23 @@ class TestShopcart(unittest.TestCase):
         # It's the correct one with correct quant
         self.assertEqual( s.products[34] , 55 )
 
+    def test_adding_an_invalid_product(self):
+        """ Test to add invalid product"""
+        shopcart = Shopcart(21)
+        shopcart.save()
+        shopcarts = shopcart.all()
+        s=shopcarts[0]
+        self.assertEqual( s.uid ,21 )
+        self.assertEqual( len(s.products) , 0 )
+        
+        # Adding product 21.5
+        s.add_product( 21.5 )
+        self.assertRaises( DataValidationError )
+
+        # Adding a second error
+        s.add_product( 34, 0.5 )
+        self.assertEqual( len(s.products) ,0 )
+        self.assertRaises( DataValidationError )
+
 if __name__ == '__main__':
     unittest.main()
