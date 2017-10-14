@@ -29,6 +29,9 @@ class Shopcart(object):
         pq_tup = (pid,quant)
         self.products.update( self.__validate_products(pq_tup) )
 
+    def delete(self):
+        """ Deletes a Shopcart in the database """
+        Shopcart.__data.remove(self)
 
     @staticmethod
     def all():

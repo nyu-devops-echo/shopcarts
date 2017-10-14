@@ -164,5 +164,33 @@ class TestShopcart(unittest.TestCase):
         except DataValidationError as e:
             print(e.args[0])
 
+    def test_get_all_shopcarts(self):
+        """ Test All Shopcarts Can Be Retrieved """
+        # Add 3 shopcarts to memory and check that we can retrieve them all
+        cart1 = Shopcart(1, [])
+        cart2 = Shopcart(2, [])
+        cart3 = Shopcart(3, [])
+        cart1.save()
+        cart2.save()
+        cart3.save()
+
+        # Invoke method and check the returned data
+        shopcarts = Shopcart.all()
+        self.assertEqual(len(shopcarts), 3)
+        self.assertEqual(shopcarts[0].uid, 1)
+        self.assertEqual(shopcarts[1].uid, 2)
+        self.assertEqual(shopcarts[2].uid, 3)
+
+    def test_delete_a_shopcart(self):
+        """ Test A Shopcart Can Be Deleted """
+        cart = Shopcart(1, {})
+        cart.save()
+        self.assertEqual( len(Shopcart.all()), 1)
+
+        # Delete the shopcart and make sure it isn't in the database
+        cart.delete()
+        self.assertEqual( len(Shopcart.all()), 0)
+
+
 if __name__ == '__main__':
     unittest.main()
