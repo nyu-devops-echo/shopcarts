@@ -4,7 +4,7 @@ from models.dataerror import DataValidationError
 from models.shopcart import Shopcart
 
 
-class TestProduct(unittest.TestCase):
+class TestDataValidationError(unittest.TestCase):
 	"""Data Error Model"""
 	@patch('models.shopcart.Shopcart')
 	def test_error(self, error_mock):
