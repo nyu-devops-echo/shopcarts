@@ -19,7 +19,7 @@ class Shopcart(object):
         """
         self.uid = int(uid)
         self.products = self.__validate_products(products)
-
+        
     def save(self):
         """ Saves a Shopcart in the database """
         Shopcart.__data.append(self)
@@ -57,7 +57,8 @@ class Shopcart(object):
                 return {products:1}
 
             if type(products) != dict : 
-                raise DataValidationError() 
+                raise DataValidationError("Invalid format for products")
+
             
             # Products is a dict of proper tuples
             if ( all( isinstance(pid,int) for pid in products.keys() ) and
@@ -65,9 +66,8 @@ class Shopcart(object):
                 return products
 
             #Products not valid
-            raise DataValidationError() 
+            raise DataValidationError("Invalid format for products")
 
         except DataValidationError as e:
-            print(type(e)) 
-            print('ERROR: Products were not added to shopcart.')
+            print('ERROR: Data Validation error' +e.args[0])
             return {}
