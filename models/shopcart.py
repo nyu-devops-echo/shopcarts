@@ -33,6 +33,29 @@ class Shopcart(object):
         """ Deletes a Shopcart in the database """
         Shopcart.__data.remove(self)
 
+    def serialize(self):
+        """Serializes a shopcart to a dictionary"""
+        return {'uid':self.uid, 'products': self.products}
+
+    def deserialize(self, data):
+        """ Deserializes a cart from a dictionary
+        Args:
+            data (dict): A dictionary containing the cart data
+        """
+        #data not dict
+        if not isinstance(data, dict):
+            raise DataValidationError('ERROR: Invalid shopcart.\nBody of request contained bad or no data')
+        
+        #Data is dict and has uid
+        if data.has_key('uid'):
+            self.uid = data['uid']
+            self.products = self.__validate_products(data['products'])
+        
+        #Data is dict and is missing uid
+        else:
+            raise DataValidationError('ERROR: Invalid shopcart.\nBody of request is missing user id')
+        return
+
     @staticmethod
     def all():
         """ Query that returns all Shopcarts """
