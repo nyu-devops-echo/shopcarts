@@ -46,5 +46,16 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual(shopcarts[1].uid, 2)
         self.assertEqual(shopcarts[2].uid, 3)
 
+    def test_delete_a_shopcart(self):
+        """ Test A Shopcart Can Be Deleted """
+        cart = Shopcart(1, {})
+        cart.save()
+        self.assertEqual( len(Shopcart.all()), 1)
+
+        # Delete the shopcart and make sure it isn't in the database
+        cart.delete()
+        self.assertEqual( len(Shopcart.all()), 0)
+
+
 if __name__ == '__main__':
     unittest.main()
