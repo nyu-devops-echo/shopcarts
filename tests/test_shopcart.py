@@ -33,43 +33,23 @@ class TestShopcart(unittest.TestCase):
     def test_string_is_invalid_product(self):
         """Test that strings are not accepted as products"""
         # Passing a string
-        try:
+        with self.assertRaises(DataValidationError):
             shopcart = Shopcart(1,'product1')
-            self.assertRaises(DataValidationError)
-        except DataValidationError as e:
-            print(e.args[0])
-        
 
     def test_float_is_invalid_product(self):
         """Test that floats are not accepted as products"""
         # Passing a double
-        try:
+        with self.assertRaises(DataValidationError):
             shopcart = Shopcart(1,2.0)
-            self.assertRaises(DataValidationError)
-        except DataValidationError as e:
-            print(e.args[0])
-            
-    def test_list_is_invalid_product(self):
-        """Test for not allowing lists in products"""
-        # No list
-        try:
-            shopcart = Shopcart(1,[])
-            self.assertRaises(DataValidationError)
-        except DataValidationError as e:
-            print(e.args[0])
             
     def test_set_is_invalid_product(self):
         """Test for not allowing sets in products"""
         # Passing a set
-        try:
+        with self.assertRaises(DataValidationError):
             shopcart = Shopcart(1,{1})
-            self.assertRaises(DataValidationError)
-        except DataValidationError as e:
-            print(e.args[0])
 
     def test_that_products_are_always_a_dict(self):
         """Test that the shopcart model has products as a dict"""
-        
         # Initializing just an id without product
         shopcart = Shopcart(1)
         self.assertTrue( type(shopcart.products) == dict )
@@ -150,26 +130,19 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual( len(s.products) , 0 )
         
         # Adding product 21.5
-        try:
+        with self.assertRaises(DataValidationError):
             s.add_product( 21.5 )
-            self.assertRaises( DataValidationError )
-        except DataValidationError as e:
-            print(e.args[0])
 
         # Adding a second error
-        try:
+        with self.assertRaises(DataValidationError):
             s.add_product( 34, 0.5 )
-            self.assertEqual( len(s.products) ,0 )
-            self.assertRaises( DataValidationError )
-        except DataValidationError as e:
-            print(e.args[0])
 
     def test_get_all_shopcarts(self):
         """ Test All Shopcarts Can Be Retrieved """
         # Add 3 shopcarts to memory and check that we can retrieve them all
-        cart1 = Shopcart(1, [])
-        cart2 = Shopcart(2, [])
-        cart3 = Shopcart(3, [])
+        cart1 = Shopcart(1)
+        cart2 = Shopcart(2)
+        cart3 = Shopcart(3)
         cart1.save()
         cart2.save()
         cart3.save()
