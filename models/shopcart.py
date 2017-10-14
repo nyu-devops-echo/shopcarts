@@ -30,6 +30,10 @@ class Shopcart(object):
         """ Saves a Shopcart in the database """
         Shopcart.__data.append(self)
 
+    def delete(self):
+        """ Deletes a Shopcart in the database """
+        Shopcart.__data.remove(self)
+
     @staticmethod
     def all():
         """ Query that returns all Shopcarts """
