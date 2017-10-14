@@ -1,7 +1,8 @@
 import unittest
+from unittest.mock import patch
 from models.dataerror import DataValidationError
 from models.shopcart import Shopcart
-from mock import patch
+
 
 class TestProduct(unittest.TestCase):
 	"""Data Error Model"""
