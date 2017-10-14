@@ -24,8 +24,9 @@ class Shopcart(object):
         """ Saves a Shopcart in the database """
         Shopcart.__data.append(self)
 
-    def add_product(self, pq_tup):
+    def add_product(self, pid, quant=1):
         """ Adds a tuple of product, quantity to the product dict """
+        pq_tup = (pid,quant)
         self.products.update( self.__validate_products(pq_tup) )
 
     @staticmethod

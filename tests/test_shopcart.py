@@ -118,14 +118,14 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual( len(s.products) , 0 )
         
         # Adding product 21 with quant 34
-        s.add_product( (21,34) )
+        s.add_product( 21,34 )
         #There's only one product
         self.assertEqual( len(s.products) ,1 )
         # It's the correct one with correct quant
         self.assertEqual( s.products[21] , 34 )
 
-        # Adding a dictionary 
-        s.add_product( {34:55} )
+        # Adding a second 
+        s.add_product( 34, 55 )
         #There's two  products
         self.assertEqual( len(s.products) ,2 )
         # It's the correct one with correct quant
