@@ -3,11 +3,21 @@ import json
 from flask_api import status
 import server
 
+# Status Codes
+HTTP_200_OK = 200
+HTTP_201_CREATED = 201
+HTTP_204_NO_CONTENT = 204
+HTTP_400_BAD_REQUEST = 400
+HTTP_404_NOT_FOUND = 404
+HTTP_409_CONFLICT = 409
+
+
 class TestServer(unittest.TestCase):
     """ Shopcarts Server Tests """
-
     def setUp(self):
         self.app = server.app.test_client()
+        server.Shopcart(1).save()
+        server.Shopcart(2).save()
 
     def test_index(self):
         """ Test the Home Page """
