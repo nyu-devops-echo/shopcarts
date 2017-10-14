@@ -39,3 +39,12 @@ class Shopcart(object):
     def remove_all():
         """ Remove all Shopcarts from memory """
         Shopcart.__data = []
+    
+    @staticmethod
+    def find(uid):
+        """ Find a Shopcart by it's uid"""
+        for cart in Shopcart.__data:
+            if cart.uid == uid:
+                return cart
+
+        return None

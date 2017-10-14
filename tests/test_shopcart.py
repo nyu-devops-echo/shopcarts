@@ -45,6 +45,24 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual(shopcarts[0].uid, 1)
         self.assertEqual(shopcarts[1].uid, 2)
         self.assertEqual(shopcarts[2].uid, 3)
+    
+    def test_find_a_shopcart(self):
+        """ Find a shopcart by uid """
+        Shopcart(2).save()
+        Shopcart(5).save()
+
+        cart = Shopcart.find(5)
+
+        self.assertEqual(cart.uid, 5)
+        self.assertEqual(len(cart.products), 0)
+    
+    def test_find_shopcart_that_doesnt_exist(self):
+        """ Try to find a non-existant Shopcart """
+        Shopcart(2).save()
+
+        cart = Shopcart.find(5)
+
+        self.assertIsNone(cart)
 
 if __name__ == '__main__':
     unittest.main()
