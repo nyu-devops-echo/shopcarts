@@ -10,6 +10,7 @@ class TestDataValidationError(unittest.TestCase):
 	def test_error(self, error_mock):
 		"""Test that error can be raised"""
 		error_mock.side_effect = DataValidationError()
+		cart=Shopcart(1)
 		self.assertRaises(DataValidationError)
 
 if __name__ == '__main__':
