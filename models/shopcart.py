@@ -18,10 +18,7 @@ class Shopcart(object):
         :param products: dict of products <products id, quantity of product>
         """
         self.uid = int(uid)
-        try:
-            self.products = self.__validate_products(products)
-        except DataValidationError as e:
-            print('ERROR: Data Validation error' +e.args[0])           
+        self.products = self.__validate_products(products)
 
     def save(self):
         """ Saves a Shopcart in the database """
@@ -30,10 +27,7 @@ class Shopcart(object):
     def add_product(self, pid, quant=1):
         """ Adds a tuple of product, quantity to the product dict """
         pq_tup = (pid,quant)
-        try:
-            self.products.update( self.__validate_products(pq_tup) )
-        except DataValidationError as e:
-            print('ERROR: Data Validation error' +e.args[0])
+        self.products.update( self.__validate_products(pq_tup) )
 
 
     @staticmethod
@@ -63,7 +57,7 @@ class Shopcart(object):
             return {products:1}
 
         if type(products) != dict : 
-            raise DataValidationError("Invalid format for products")
+            raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
 
         # Products is a dict of proper tuples
         if ( all( isinstance(pid,int) for pid in products.keys() ) and
@@ -71,4 +65,4 @@ class Shopcart(object):
             return products
 
         #Products not valid
-        raise DataValidationError("Invalid format for products")
+        raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
