@@ -10,6 +10,9 @@ class TestServer(unittest.TestCase):
         server.Shopcart(1).save()
         server.Shopcart(2).save()
 
+    def tearDown(self):
+        server.Shopcart.remove_all()
+
     def test_index(self):
         """ Test the Home Page """
         resp = self.app.get('/')
