@@ -67,6 +67,15 @@ class Shopcart(object):
         Shopcart.__data = []
 
     @staticmethod
+    def find(uid):
+        """ Find a Shopcart by it's uid"""
+        for cart in Shopcart.__data:
+            if cart.uid == uid:
+                return cart
+
+        return None
+
+    @staticmethod
     def __validate_products(products):
         """ Validates products or raises an error"""
         # Product is none so set an empty list
@@ -92,12 +101,3 @@ class Shopcart(object):
 
         #Products not valid
         raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
-    
-    @staticmethod
-    def find(uid):
-        """ Find a Shopcart by it's uid"""
-        for cart in Shopcart.__data:
-            if cart.uid == uid:
-                return cart
-
-        return None
