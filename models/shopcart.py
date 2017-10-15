@@ -33,6 +33,16 @@ class Shopcart(object):
         """ Deletes a Shopcart in the database """
         Shopcart.__data.remove(self)
 
+    def serialize(self):
+        """ Serializes a shopcart into a dictionary """
+        return {"uid": self.uid, "products": self.products }
+
+    def get_available_id(self):
+        uid=0
+        while self.find(uid):
+            uid +=1
+        return uid
+
     @staticmethod
     def all():
         """ Query that returns all Shopcarts """
