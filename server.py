@@ -54,10 +54,14 @@ def create_shopcart():
     try:
         prods ={}
         if 'products' in dat.keys():
-            if type(dat['products']) == dict:
-                prods = { int(p):int(q) for (p,q) in dat['products'].items() }
-            else:
-                prods = dat['products']
+            try:
+                if type(dat['products']) == dict:
+                    prods = { int(p):int(q) for (p,q) in dat['products'].items() }
+                else:
+                    prods = dat['products']
+            except ValueError as e:
+                raise DataValidationError('ERROR: %s has an invalid format for products'% dat['products'])
+
         if 'uid' in dat.keys():
             uid = dat['uid']
         else:

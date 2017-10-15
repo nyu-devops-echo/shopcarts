@@ -87,33 +87,31 @@ class TestServer(unittest.TestCase):
         new_json = json.loads(resp.data.decode('utf8'))
         self.assertEqual(new_json, json.loads(data))
 
-    # def test_create_shopcart_one_prods(self):
-    #     """ Create a shopcart with one product id PUT request"""
+    def test_create_shopcart_one_prods(self):
+        """ Create a shopcart with one product id PUT request"""
         
-    #     # add a new shopcart with one products
-    #     new_shopcart = {'uid': 5 , 'products':21}
-    #     data = json.dumps(new_shopcart)
-    #     resp = self.app.post('/shopcarts/', data=data, content_type='application/json')
-    #     self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # add a new shopcart with one products
+        new_shopcart = {'uid': 5 , 'products':21}
+        data = json.dumps(new_shopcart)
+        resp = self.app.post('/shopcarts/', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         
-    #     # Make sure location header is set
-    #     location = resp.headers.get('Location', None)
-    #     self.assertIsNotNone(location)
+        # Make sure location header is set
+        location = resp.headers.get('Location', None)
+        self.assertIsNotNone(location)
 
-    #     # Check the data is correct
-    #     new_json = json.loads(resp.data.decode('utf8'))
-    #     data=json.loads( json.dumps( {'uid': 5 , 'products':{21:1} }) )
-    #     self.assertEqual(new_json, data)
+        # Check the data is correct
+        new_json = json.loads(resp.data.decode('utf8'))
+        data=json.loads( json.dumps( {'uid': 5 , 'products':{21:1} }) )
+        self.assertEqual(new_json, data)
 
-    # def test_create_shopcart_invalid_prods(self):
-    #     """ Create a shopcart with invalid products PUT request"""
-    #     # add a new shopcart with many products
-    #     new_shopcart = {'uid': 5 , 'products':{'prod1':13}}
-    #     data = json.dumps(new_shopcart)
-    #     resp = self.app.post('/shopcarts/', data=data, content_type='application/json')
-    #     self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_create_shopcart_invalid_prods(self):
+        """ Create a shopcart with invalid products PUT request"""
+        # add a new shopcart with many products
+        new_shopcart = {'uid': 5 , 'products':{'prod1':13}}
+        data = json.dumps(new_shopcart)
+        resp = self.app.post('/shopcarts/', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         
-
-
 if __name__ == '__main__':
     unittest.main()
