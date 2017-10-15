@@ -7,14 +7,6 @@ app = Flask(__name__)
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 PORT = os.getenv('PORT', '5000')
 
-# Status Codes
-HTTP_200_OK = 200
-HTTP_201_CREATED = 201
-HTTP_204_NO_CONTENT = 204
-HTTP_400_BAD_REQUEST = 400
-HTTP_404_NOT_FOUND = 404
-HTTP_409_CONFLICT = 409
-
 ######################################################################
 # GET INDEX
 ######################################################################
@@ -33,10 +25,10 @@ def get_shopcarts(id):
     cart = Shopcart.find(id)
     if cart:
         message = { 'uid': cart.uid, 'products': cart.products }
-        rc = HTTP_200_OK
+        rc = status.HTTP_200_OK
     else:
         message = { 'error' : 'Shopcart with id: %s was not found' % str(id) }
-        rc = HTTP_404_NOT_FOUND
+        rc = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), rc
 
