@@ -36,45 +36,23 @@ def get_shopcarts(id):
 ######################################################################
 # Create a Shopcart
 ######################################################################
-@app.route('/shopcarts/', methods=['POST'])
+@app.route('/shopcarts', methods=['POST'])
 def create_shopcart():
+    """Creates a shopcart and saves it to database
+        POST Request accepts data as: no id (Finds the first available and assigns it)
     """
-        Creates a shopcart and saves it to database
-        POST Request accepts data as:
-            - no id (Finds the first available and assigns it)
-            - id 
-            - id + one product id (Model sets quant to 1)
-            - id + dictionary of {prod_id:quant}
-    """
-    dat= request.get_json()
-    if Shopcart.find( dat['uid'] ):
-        message = { 'ERROR' : 'Shopcart with id: %s is in Database' % str(id) }
-        return make_response(jsonify(message), status.HTTP_400_BAD_REQUEST )
-    
+    cart = Shopcart()
     try:
-        prods ={}
-        if 'products' in dat.keys():
-            try:
-                if type(dat['products']) == dict:
-                    prods = { int(p):int(q) for (p,q) in dat['products'].items() }
-                else:
-                    prods = dat['products']
-            except ValueError as e:
-                raise DataValidationError('ERROR: %s has an invalid format for products'% dat['products'])
-
-        if 'uid' in dat.keys():
-            uid = dat['uid']
-        else:
-            uid = Shopcart().get_available_id()
-        cart = Shopcart(uid, prods )
+        cart.deserialize(  request.get_json() )
     except DataValidationError as e:
-        return make_response( jsonify(e.args[0]) , status.HTTP_400_BAD_REQUEST )
+        message = {'error': e.args[0]}
+        return jsonify(message), status.HTTP_400_BAD_REQUEST
 
     cart.save()
     message = cart.serialize()
-    location_url = url_for('get_shopcarts', id=cart.uid, _external=True)
-    return jsonify(message), status.HTTP_201_CREATED, {'Location': location_url}
-
+    location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)    
+    return make_response(jsonify(message), status.HTTP_201_CREATED, { 'Location': location_url })
+    
 if __name__ == "__main__":
     # dummy data for server testing
     app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)
