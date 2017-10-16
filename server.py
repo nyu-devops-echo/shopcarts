@@ -36,22 +36,25 @@ def get_shopcarts(id):
 ######################################################################
 # Create a Shopcart
 ######################################################################
-@app.route('/shopcarts/<int:id>', methods=['PUT'])
+@app.route('/shopcarts/<int:id>', methods=['POST'])
 def create_shopcart(id):
-    """Creates a shopcart and saves it to database
-        POST Request accepts data as: 
-        - id + prod id (sets default to 1)
-        - id + {prod:quant}
-    """
-    # if cart = Shopcart.find(id):
-        # Not clear on what to do here
-    #     return 
-    cart = Shopcart()
+    """Creates a shopcart and saves it to database"""
+    cart = Shopcart.find(id)
+    if cart:
+        message = jsonify({ 'error' : 'Shopcart for user %s already exits' % str(id) })
+        rc = status.HTTP_409_CONFLICT
+        return make_response(message,rc)
+
+    # Create the Cart
+    cart = Shopcart(id)
+    #Validate correct data
     try:
         cart.deserialize(  request.get_json() )
     except DataValidationError as e:
-        message = {'error': e.args[0]}
+        message = { 'error': e.args[0] }
         return jsonify(message), status.HTTP_400_BAD_REQUEST
+
+    # If correct save it and return object
     cart.save()
     message = cart.serialize()
     location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)    
