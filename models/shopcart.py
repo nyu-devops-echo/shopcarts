@@ -39,11 +39,6 @@ class Shopcart(object):
 
     def deserialize(self,data):
         """ Deserializes a shopcart from a dictionary """
-
-        #Just a product id
-        if type( data ) == int:
-            self.products = self.__validate_products( data  )
-            return
         
         # A {'products': {'prod':quant} } ** JSON.DUMP MAKES KEYS TO STR
         if type( data ) != dict :
@@ -58,6 +53,8 @@ class Shopcart(object):
                     prods = int( data['products'] )
                 self.products = self.__validate_products( prods )
             except ValueError :
+                raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
+            except TypeError :
                 raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
         return
 

@@ -36,9 +36,16 @@ def get_shopcarts(id):
 ######################################################################
 # Create a Shopcart
 ######################################################################
-@app.route('/shopcarts/<int:id>', methods=['POST'])
-def create_shopcart(id):
+@app.route('/shopcarts', methods=['POST'])
+def create_shopcart():
     """Creates a shopcart and saves it to database"""
+    data = request.get_json()
+    try :
+        id = data['uid']
+    except KeyError :
+        message = { 'error': 'POST needs a user id' }
+        return jsonify(message), status.HTTP_400_BAD_REQUEST
+
     cart = Shopcart.find(id)
     if cart:
         message = jsonify({ 'error' : 'Shopcart for user %s already exits' % str(id) })
@@ -49,7 +56,7 @@ def create_shopcart(id):
     cart = Shopcart(id)
     #Validate correct data
     try:
-        cart.deserialize(  request.get_json() )
+        cart.deserialize(  data )
     except DataValidationError as e:
         message = { 'error': e.args[0] }
         return jsonify(message), status.HTTP_400_BAD_REQUEST
