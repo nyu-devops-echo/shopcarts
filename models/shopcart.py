@@ -33,6 +33,10 @@ class Shopcart(object):
         """ Deletes a Shopcart in the database """
         Shopcart.__data.remove(self)
 
+    def delete_product(self, pid):
+        """ Removes a Product entirely from a Shopcart """
+        self.products.pop(pid, None)
+
     @staticmethod
     def all():
         """ Query that returns all Shopcarts """
@@ -60,15 +64,15 @@ class Shopcart(object):
             return {}
 
         #Not None
-        # Tuple of product, quantity 
-        if type(products) == tuple  and len(products)==2 and all(isinstance(pq,int) for pq in products): 
+        # Tuple of product, quantity
+        if type(products) == tuple  and len(products)==2 and all(isinstance(pq,int) for pq in products):
             return {products[0]:products[1]}
 
         # Just a Product id, set default quantity to 1
-        if type(products) == int: 
+        if type(products) == int:
             return {products:1}
 
-        if type(products) != dict : 
+        if type(products) != dict :
             raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
 
         # Products is a dict of proper tuples

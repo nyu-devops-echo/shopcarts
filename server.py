@@ -40,7 +40,7 @@ def get_shopcarts(id):
 def delete_product(uid, pid):
     cart = Shopcart.find(uid)
     if cart:
-        cart.products.pop(pid, None)
+        cart.delete_product(pid)
     return make_response('', status.HTTP_204_NO_CONTENT)
 
 if __name__ == "__main__":
