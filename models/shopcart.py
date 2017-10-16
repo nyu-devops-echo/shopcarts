@@ -60,12 +60,6 @@ class Shopcart(object):
                 raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
         return
 
-    def get_available_id(self):
-        uid=0
-        while self.find(uid):
-            uid +=1
-        return uid
-
     @staticmethod
     def all():
         """ Query that returns all Shopcarts """
