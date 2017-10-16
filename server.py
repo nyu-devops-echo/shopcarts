@@ -17,7 +17,7 @@ def index():
                    version='1.0',
                    description= 'This is the REST API Service for the shopcarts.'), status.HTTP_200_OK
 
-
+######################################################################
 # RETRIEVE A SHOPCART
 ######################################################################
 @app.route('/shopcarts/<int:id>', methods=['GET'])
@@ -32,6 +32,16 @@ def get_shopcarts(id):
 
     return jsonify(message), rc
 
+
+######################################################################
+# DELETE A PRODUCT FROM A SHOPCART
+######################################################################
+@app.route('/shopcarts/<int:uid>/products/<int:pid>', methods=['DELETE'])
+def delete_product(uid, pid):
+    cart = Shopcart.find(uid)
+    if cart:
+        cart.products.pop(pid, None)
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 if __name__ == "__main__":
     # dummy data for server testing

@@ -9,6 +9,8 @@ class TestServer(unittest.TestCase):
         self.app = server.app.test_client()
         server.Shopcart(1).save()
         server.Shopcart(2).save()
+        # uid 3 is used in test_get_nonexistent_shopcart
+        server.Shopcart(4, { 5 : 7, 13 : 21, 34 : 55 }).save()
 
     def tearDown(self):
         server.Shopcart.remove_all()
@@ -36,6 +38,22 @@ class TestServer(unittest.TestCase):
         self.assertEqual( resp.status_code, status.HTTP_404_NOT_FOUND )
         data = json.loads(resp.data.decode('utf8'))
         self.assertEqual (data['error'], 'Shopcart with id: 3 was not found')
+
+    def test_delete_a_product_from_shopcart(self):
+        """ Test Delete a Product From A Shopcart """
+        # Delete products with ID of 5 from cart 1
+        resp = self.app.delete('/shopcarts/4/products/5')
+        self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
+        cart = server.Shopcart.find(4)
+        self.assertEqual( (5 in cart.products), False)
+
+    def test_delete_nonexistent_product_from_shopcart(self):
+        """ Test Delete a Nonexistent Product From A Shopcart """
+        resp = self.app.delete('/shopcarts/2/products/5')
+        self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
+        cart = server.Shopcart.find(2)
+        self.assertEqual( (5 in cart.products), False)
+
 
 if __name__ == '__main__':
     unittest.main()
