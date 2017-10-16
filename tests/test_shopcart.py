@@ -182,16 +182,6 @@ class TestShopcart(unittest.TestCase):
         cart.delete()
         self.assertEqual( len(Shopcart.all()), 0)
 
-    def test_get_an_available_shopcart_id(self):
-        """ Test to get an available id """
-        cart = Shopcart(0)
-        cart.save()
-        self.assertEqual( Shopcart().get_available_id(), 1)
-        cart = Shopcart(1)
-        cart.save()
-        cart = Shopcart(2)
-        cart.save()
-        self.assertEqual( Shopcart().get_available_id(), 3)
 
 if __name__ == '__main__':
     unittest.main()
