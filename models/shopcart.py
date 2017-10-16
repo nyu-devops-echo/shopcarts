@@ -39,9 +39,15 @@ class Shopcart(object):
 
     def deserialize(self,data):
         """ Deserializes a shopcart from a dictionary """
-        self.uid = self.get_available_id()
+        
         if type( data ) != dict :
             raise DataValidationError('Invalid shopcart: body of request contained bad or no data')
+
+        if "uid" in data.keys():
+            try:
+                self.uid = int(data['uid'])
+            except ValueError :
+                raise DataValidationError('ERROR: %s has an invalid format for user id'% data['uid'])
 
         if "products" in data.keys():
             try:
@@ -50,7 +56,7 @@ class Shopcart(object):
                 else:
                     prods = int( data['products'] )
                 self.products = self.__validate_products( prods )
-            except ValueError as e:
+            except ValueError :
                 raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
         return
 

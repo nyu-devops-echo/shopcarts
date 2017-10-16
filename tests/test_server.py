@@ -2,8 +2,6 @@ import unittest
 import json
 from flask_api import status
 import server
-# from models.shopcart import Shopcart
-# from models.dataerror import DataValidationError
 
 class TestServer(unittest.TestCase):
     """ Shopcarts Server Tests """
@@ -43,61 +41,79 @@ class TestServer(unittest.TestCase):
     def test_create_shopcart(self):
         """ Create an empty shopcart POST on shopcarts"""
         # add a new shopcart 
-        cart = {'uid':3}
-        resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
+        n_cart = len(server.Shopcart.all())
+        cart = {'uid':3 }
+        resp = self.app.put('/shopcarts/3', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         
         # Make sure location header is set
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
-        # data = json.loads(resp.data.decode('utf8'))
-        # self.assertEqual(location, data['Location'] )
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertIn('/shopcarts/3',location  )
+        #Actually saved
+        self.assertEqual(len(server.Shopcart.all()),n_cart+1 )
 
     def test_create_shopcart_invalid_data(self):
         """ Create a cart with invalid data"""
         # add a new shopcart 
-        prods = [1]
-        resp = self.app.post('/shopcarts', data=json.dumps(prods), content_type='application/json')
+        new = {'uid':'one'}
+        resp = self.app.put('/shopcarts/3', data=json.dumps(new), content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        
+    def test_create_shopcart_invalid_prod_data(self):
+        """ Create a cart with invalid  product data"""
+        # add a new shopcart 
+        prods = 3
+        resp = self.app.put('/shopcarts/3', data=json.dumps(prods), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         
     def test_create_shopcart_one_prods(self):
-        """ Create a shopcart with one product id PUT request"""        
+        """ Create a shopcart with one product id POST request"""        
         # add a new shopcart with one product
-        cart = {'products':21}
+        n_cart = len(server.Shopcart.all())
+        cart = {'uid':3, 'products':21}
         data = json.dumps(cart)
-        resp = self.app.post('/shopcarts', data=data, content_type='application/json')
+        resp = self.app.put('/shopcarts/1', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
-
+        self.assertIn('/shopcarts/3',location  )
         # Check the data is correct
         new_json = json.loads(resp.data.decode('utf8'))
         self.assertEqual(new_json['products'], {'21':1} )
+        #Actually saved
+        self.assertEqual(len(server.Shopcart.all()),n_cart+1 )
+
 
     def test_create_shopcart_prods(self):
-        """ Create a shopcart with many products PUT request"""
-        
+        """ Create a shopcart with many products POST request"""
+        n_cart = len(server.Shopcart.all())
         # add a new shopcart with many products
-        new_shopcart = { "products": { 8:13 , 21:34 } }
+        new_shopcart = { 'uid':3, "products": { 8:13 , 21:34 } }
         data = json.dumps( new_shopcart )
-        resp = self.app.post('/shopcarts', data=data, content_type='application/json')
+        resp = self.app.put('/shopcarts/3', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         
         # Make sure location header is set
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
+        self.assertIn('/shopcarts/3',location  )
 
         # Check the data is correct
         new_json = json.loads(resp.data.decode('utf8'))
         self.assertEqual(new_json['products'], {"8":13,"21":34})
+        self.assertEqual(len(server.Shopcart.all()),n_cart+1 )
+
 
     def test_create_shopcart_invalid_prods(self):
-        """ Create a shopcart with invalid products PUT request"""
+        """ Create a shopcart with invalid products POST request"""
         # add a new shopcart with many products
-        new_shopcart = { 'products': { 'prod1':'13'} }
+        new_shopcart = { 'uid':3, 'products': { 'prod1':'13'} }
         data = json.dumps(new_shopcart)
-        resp = self.app.post('/shopcarts', data=data, content_type='application/json')
+        resp = self.app.put('/shopcarts/3', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        
+
+
 if __name__ == '__main__':
     unittest.main()

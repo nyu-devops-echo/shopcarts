@@ -36,18 +36,22 @@ def get_shopcarts(id):
 ######################################################################
 # Create a Shopcart
 ######################################################################
-@app.route('/shopcarts', methods=['POST'])
-def create_shopcart():
+@app.route('/shopcarts/<int:id>', methods=['PUT'])
+def create_shopcart(id):
     """Creates a shopcart and saves it to database
-        POST Request accepts data as: no id (Finds the first available and assigns it)
+        POST Request accepts data as: 
+        - id + prod id (sets default to 1)
+        - id + {prod:quant}
     """
+    # if cart = Shopcart.find(id):
+        # Not clear on what to do here
+    #     return 
     cart = Shopcart()
     try:
         cart.deserialize(  request.get_json() )
     except DataValidationError as e:
         message = {'error': e.args[0]}
         return jsonify(message), status.HTTP_400_BAD_REQUEST
-
     cart.save()
     message = cart.serialize()
     location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)    
