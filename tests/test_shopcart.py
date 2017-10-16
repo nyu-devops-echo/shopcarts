@@ -41,7 +41,7 @@ class TestShopcart(unittest.TestCase):
         # Passing a double
         with self.assertRaises(DataValidationError):
             shopcart = Shopcart(1,2.0)
-            
+
     def test_set_is_invalid_product(self):
         """Test for not allowing sets in products"""
         # Passing a set
@@ -81,7 +81,7 @@ class TestShopcart(unittest.TestCase):
         self.assertTrue( len(shopcart.products) > 0)
         self.assertEqual( shopcart.products , {5:1} )
 
-        # Creating a valid dictionary 
+        # Creating a valid dictionary
         shopcart = Shopcart(0, {5:7,13:21,34:55 } )
         self.assertEqual( shopcart.products , {5:7,13:21,34:55 } )
 
@@ -93,7 +93,7 @@ class TestShopcart(unittest.TestCase):
         #Correct Type
         s = shopcarts[0]
         self.assertTrue( type(s.products) == dict)
-        
+
         #Correct Length
         self.assertEqual( len(s.products) , 3)
 
@@ -105,7 +105,7 @@ class TestShopcart(unittest.TestCase):
         s=shopcarts[0]
         self.assertEqual( s.uid ,7 )
         self.assertEqual( len(s.products) , 0 )
-        
+
         # Adding product 21 with quant 34
         s.add_product( 21,34 )
         #There's only one product
@@ -113,7 +113,7 @@ class TestShopcart(unittest.TestCase):
         # It's the correct one with correct quant
         self.assertEqual( s.products[21] , 34 )
 
-        # Adding a second 
+        # Adding a second
         s.add_product( 34, 55 )
         #There's two  products
         self.assertEqual( len(s.products) ,2 )
@@ -128,7 +128,7 @@ class TestShopcart(unittest.TestCase):
         s=shopcarts[0]
         self.assertEqual( s.uid ,21 )
         self.assertEqual( len(s.products) , 0 )
-        
+
         # Adding product 21.5
         with self.assertRaises(DataValidationError):
             s.add_product( 21.5 )
@@ -153,7 +153,7 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual(shopcarts[0].uid, 1)
         self.assertEqual(shopcarts[1].uid, 2)
         self.assertEqual(shopcarts[2].uid, 3)
-    
+
     def test_find_a_shopcart(self):
         """ Find a shopcart by uid """
         Shopcart(2).save()
@@ -163,7 +163,7 @@ class TestShopcart(unittest.TestCase):
 
         self.assertEqual(cart.uid, 5)
         self.assertEqual(len(cart.products), 0)
-    
+
     def test_find_shopcart_that_doesnt_exist(self):
         """ Try to find a non-existant Shopcart """
         Shopcart(2).save()
@@ -181,17 +181,6 @@ class TestShopcart(unittest.TestCase):
         # Delete the shopcart and make sure it isn't in the database
         cart.delete()
         self.assertEqual( len(Shopcart.all()), 0)
-
-    def test_get_an_available_shopcart_id(self):
-        """ Test to get an available id """
-        cart = Shopcart(0)
-        cart.save()
-        self.assertEqual( Shopcart().get_available_id(), 1)
-        cart = Shopcart(1)
-        cart.save()
-        cart = Shopcart(2)
-        cart.save()
-        self.assertEqual( Shopcart().get_available_id(), 3)
 
 if __name__ == '__main__':
     unittest.main()
