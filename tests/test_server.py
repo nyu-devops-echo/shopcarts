@@ -167,6 +167,27 @@ class TestServer(unittest.TestCase):
         new_json = json.loads(resp.data.decode('utf8'))
         self.assertEqual(new_json['products']["3"], 2 )
 
+    def test_update_product(self):
+        """Updating a product to 0"""
+        cart = server.Shopcart.find(2)
+
+        self.assertIsNotNone(cart)
+        cart.add_product(pid=2,quant=3)
+        cart.add_product( pid = 3, quant= 5 )
+        
+        prods_in_cart = cart.serialize()['products']
+        self.assertEqual(prods_in_cart, {2:3,3:5} )
+        
+        pid_to_update= 3
+        quant_to_update= 0
+        data = json.dumps( {'products': {pid_to_update:quant_to_update} } )
+        
+        resp = self.app.put('/shopcarts/2/products/' + str(pid_to_update), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        new_json = json.loads(resp.data.decode('utf8'))
+        self.assertNotIn("3",new_json['products'] )
+
     def test_update_product_not_existing_shopcart(self):
         """Updating a product of an unexistent shopcart"""
         self.assertIsNone(server.Shopcart.find(3) )

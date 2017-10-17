@@ -53,6 +53,10 @@ class Shopcart(object):
                 if type( data['products'] ) == dict:
                     # ** JSON.DUMP MAKES KEYS TO STR
                     prods = { int(p):int(q) for (p,q) in data['products'].items() }
+                    for pid,quant in prods.items():
+                        if quant == 0:
+                            self.delete_product(pid)
+                            prods.pop(pid,None)
                 else:
                     prods = int( data['products'] )
                 self.products.update( self.__validate_products( prods ) )
@@ -60,6 +64,8 @@ class Shopcart(object):
                 raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
             except TypeError :
                 raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
+
+       
         return
 
     @staticmethod
