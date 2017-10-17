@@ -161,6 +161,12 @@ class TestServer(unittest.TestCase):
         cart = server.Shopcart.find(2)
         self.assertEqual( (5 in cart.products), False)
 
+    def test_get_all_shopcart(self):
+        """ List All Shopcarts """
+        resp = self.app.get('/shopcarts')
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        carts = json.loads(resp.data.decode('utf8'))
+        self.assertEqual( len(carts), 3)
 
 if __name__ == '__main__':
     unittest.main()
