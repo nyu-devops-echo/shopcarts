@@ -34,6 +34,22 @@ def get_shopcarts(id):
     return jsonify(message), rc
 
 ######################################################################
+# DELETE A SHOPCART
+######################################################################
+@app.route('/shopcarts/<int:id>', methods=['DELETE'])
+def delete_shopcarts(id):
+    """
+    Delete a Shopcart
+    This endpoint will delete a Shopcart based on the id specified in the path
+    """
+    cart = Shopcart.find(id)
+    
+    if cart:
+        cart.delete()
+
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
+######################################################################
 # Create a Shopcart
 ######################################################################
 @app.route('/shopcarts', methods=['POST'])
