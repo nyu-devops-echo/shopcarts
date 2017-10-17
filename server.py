@@ -18,7 +18,7 @@ def index():
                    version='1.0',
                    description= 'This is the REST API Service for the shopcarts.'), status.HTTP_200_OK
 
-
+######################################################################
 # RETRIEVE A SHOPCART
 ######################################################################
 @app.route('/shopcarts/<int:id>', methods=['GET'])
@@ -32,6 +32,22 @@ def get_shopcarts(id):
         rc = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), rc
+
+######################################################################
+# DELETE A SHOPCART
+######################################################################
+@app.route('/shopcarts/<int:id>', methods=['DELETE'])
+def delete_shopcarts(id):
+    """
+    Delete a Shopcart
+    This endpoint will delete a Shopcart based on the id specified in the path
+    """
+    cart = Shopcart.find(id)
+
+    if cart:
+        cart.delete()
+
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 ######################################################################
 # Create a Shopcart
@@ -64,10 +80,9 @@ def create_shopcart():
     # If correct save it and return object
     cart.save()
     message = cart.serialize()
-    location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)    
+    location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED, { 'Location': location_url })
     
-
 ######################################################################
 # UPDATE AN EXISTING Shopcart product
 ######################################################################
@@ -96,6 +111,17 @@ def update_shopcart(uid,pid):
 
 
 ######################################################################
+# DELETE A PRODUCT FROM A SHOPCART
+######################################################################
+@app.route('/shopcarts/<int:uid>/products/<int:pid>', methods=['DELETE'])
+def delete_product(uid, pid):
+    cart = Shopcart.find(uid)
+    if cart:
+        cart.delete_product(pid)
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
@@ -105,6 +131,7 @@ def check_content_type(content_type):
         return
     #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
+
 
 
 if __name__ == "__main__":

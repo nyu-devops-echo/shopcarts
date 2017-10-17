@@ -33,13 +33,17 @@ class Shopcart(object):
         """ Deletes a Shopcart in the database """
         Shopcart.__data.remove(self)
 
+    def delete_product(self, pid):
+        """ Removes a Product entirely from a Shopcart """
+        self.products.pop(pid, None)
+
     def serialize(self):
         """ Serializes a shopcart into a dictionary """
         return {"uid": self.uid, "products": self.products }
 
     def deserialize(self,data):
         """ Deserializes a shopcart from a dictionary """
-        
+
         # A {'products': {'prod':quant} } ** JSON.DUMP MAKES KEYS TO STR
         if type( data ) != dict :
             raise DataValidationError('Invalid shopcart: body of request contained bad or no data')
@@ -85,19 +89,18 @@ class Shopcart(object):
             return {}
 
         #Not None
-        # Tuple of product, quantity 
-        if type(products) == tuple  and len(products)==2 and all(isinstance(pq,int) for pq in products): 
+        # Tuple of product, quantity
+        if type(products) == tuple  and len(products)==2 and all(isinstance(pq,int) for pq in products):
             return {products[0]:products[1]}
 
         # Just a Product id, set default quantity to 1
-        if type(products) == int and products >= 0: 
+        if type(products) == int and products >= 0:
             return {products:1}
 
-        if type(products) != dict : 
+        if type(products) != dict :
             raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
 
         # Products is a dict of proper tuples
         if ( all( isinstance(pid,int) for pid in products.keys() ) and
              all( (isinstance(q,int) and (q > 0)) for q in products.values() ) ):
             return products
-
