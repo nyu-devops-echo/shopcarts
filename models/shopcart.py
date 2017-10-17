@@ -33,6 +33,31 @@ class Shopcart(object):
         """ Deletes a Shopcart in the database """
         Shopcart.__data.remove(self)
 
+    def serialize(self):
+        """ Serializes a shopcart into a dictionary """
+        return {"uid": self.uid, "products": self.products }
+
+    def deserialize(self,data):
+        """ Deserializes a shopcart from a dictionary """
+        
+        # A {'products': {'prod':quant} } ** JSON.DUMP MAKES KEYS TO STR
+        if type( data ) != dict :
+            raise DataValidationError('Invalid shopcart: body of request contained bad or no data')
+
+        if "products" in data.keys():
+            try:
+                if type( data['products'] ) == dict:
+                    # ** JSON.DUMP MAKES KEYS TO STR
+                    prods = { int(p):int(q) for (p,q) in data['products'].items() }
+                else:
+                    prods = int( data['products'] )
+                self.products = self.__validate_products( prods )
+            except ValueError :
+                raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
+            except TypeError :
+                raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
+        return
+
     @staticmethod
     def all():
         """ Query that returns all Shopcarts """
@@ -65,7 +90,7 @@ class Shopcart(object):
             return {products[0]:products[1]}
 
         # Just a Product id, set default quantity to 1
-        if type(products) == int: 
+        if type(products) == int and products >= 0: 
             return {products:1}
 
         if type(products) != dict : 
@@ -76,5 +101,3 @@ class Shopcart(object):
              all( (isinstance(q,int) and (q > 0)) for q in products.values() ) ):
             return products
 
-        #Products not valid
-        raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
