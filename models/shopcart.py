@@ -51,7 +51,7 @@ class Shopcart(object):
                     prods = { int(p):int(q) for (p,q) in data['products'].items() }
                 else:
                     prods = int( data['products'] )
-                self.products = self.__validate_products( prods )
+                self.products.update( self.__validate_products( prods ) )
             except ValueError :
                 raise DataValidationError('ERROR: %s has an invalid format for products'% data['products'])
             except TypeError :
