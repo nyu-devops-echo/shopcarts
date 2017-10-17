@@ -182,6 +182,11 @@ class TestShopcart(unittest.TestCase):
         cart.delete()
         self.assertEqual( len(Shopcart.all()), 0)
 
+    def test_delete_products_from_shopcart(self):
+        cart = Shopcart(1, { 5 : 7})
+        cart.save()
+        cart.delete_product(5)
+        self.assertEqual( len(cart.products), 0 )
 
 if __name__ == '__main__':
     unittest.main()

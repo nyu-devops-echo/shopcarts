@@ -18,7 +18,7 @@ def index():
                    version='1.0',
                    description= 'This is the REST API Service for the shopcarts.'), status.HTTP_200_OK
 
-
+######################################################################
 # RETRIEVE A SHOPCART
 ######################################################################
 @app.route('/shopcarts/<int:id>', methods=['GET'])
@@ -43,7 +43,7 @@ def delete_shopcarts(id):
     This endpoint will delete a Shopcart based on the id specified in the path
     """
     cart = Shopcart.find(id)
-    
+
     if cart:
         cart.delete()
 
@@ -80,9 +80,19 @@ def create_shopcart():
     # If correct save it and return object
     cart.save()
     message = cart.serialize()
-    location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)    
+    location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED, { 'Location': location_url })
-    
+
+######################################################################
+# DELETE A PRODUCT FROM A SHOPCART
+######################################################################
+@app.route('/shopcarts/<int:uid>/products/<int:pid>', methods=['DELETE'])
+def delete_product(uid, pid):
+    cart = Shopcart.find(uid)
+    if cart:
+        cart.delete_product(pid)
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
 if __name__ == "__main__":
     # dummy data for server testing
     app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)

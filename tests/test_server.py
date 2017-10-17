@@ -9,6 +9,8 @@ class TestServer(unittest.TestCase):
         self.app = server.app.test_client()
         server.Shopcart(1).save()
         server.Shopcart(2).save()
+        # uid 3 is used in test_get_nonexistent_shopcart
+        server.Shopcart(4, { 5 : 7, 13 : 21, 34 : 55 }).save()
 
     def tearDown(self):
         server.Shopcart.remove_all()
@@ -36,7 +38,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual( resp.status_code, status.HTTP_404_NOT_FOUND )
         data = json.loads(resp.data.decode('utf8'))
         self.assertEqual (data['error'], 'Shopcart with id: 3 was not found')
-    
+
     def test_delete_shopcart(self):
         """ Delete a Shopcart that exists """
         cart_count = len(server.Shopcart.all())
@@ -45,7 +47,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(resp.data), 0)
         self.assertEqual(len(server.Shopcart.all()), cart_count - 1)
-    
+
     def test_delete_nonexistent_shopcart(self):
         """ Delete a Shopcart that doesn't exist """
         cart_count = len(server.Shopcart.all())
@@ -58,12 +60,12 @@ class TestServer(unittest.TestCase):
 
     def test_create_shopcart(self):
         """ Create an empty shopcart POST on shopcarts"""
-        # add a new shopcart 
+        # add a new shopcart
         n_cart = len(server.Shopcart.all())
         cart = {'uid': 3 }
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        
+
         # Make sure location header is set
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
@@ -77,15 +79,15 @@ class TestServer(unittest.TestCase):
         cart = {'uid': 3 , "products":'prod1'}
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        
+
         cart= {'uid': 3 , "products":-12}
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        
+
         cart= {'uid': 3 , 'products':[]}
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        
+
     def test_create_shopcart_with_a_prod(self):
         """ Create a cart uid 3 with a product id 5"""
         n_cart = len(server.Shopcart.all())
@@ -107,7 +109,7 @@ class TestServer(unittest.TestCase):
         data = json.dumps( new_shopcart )
         resp = self.app.post('/shopcarts', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        
+
         # Make sure location header is set
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
@@ -144,6 +146,20 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(n_cart, len(server.Shopcart.all()) )
 
+    def test_delete_a_product_from_shopcart(self):
+        """ Test Delete a Product From A Shopcart """
+        # Delete products with ID of 5 from cart 1
+        resp = self.app.delete('/shopcarts/4/products/5')
+        self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
+        cart = server.Shopcart.find(4)
+        self.assertEqual( (5 in cart.products), False)
+
+    def test_delete_nonexistent_product_from_shopcart(self):
+        """ Test Delete a Nonexistent Product From A Shopcart """
+        resp = self.app.delete('/shopcarts/2/products/5')
+        self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
+        cart = server.Shopcart.find(2)
+        self.assertEqual( (5 in cart.products), False)
 
 
 if __name__ == '__main__':
