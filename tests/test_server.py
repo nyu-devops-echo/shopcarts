@@ -238,6 +238,38 @@ class TestServer(unittest.TestCase):
         self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
         cart = server.Shopcart.find(2)
         self.assertEqual( (5 in cart.products), False)
+    
+    def test_add_new_product_to_cart(self):
+        """ Add a new product to the cart """
+        product_count = len(server.Shopcart.find(2).products)
+        data = {'products': {1: 2}}
+        
+        resp = self.app.post('/shopcarts/2/products', data=json.dumps(data), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data['products']), product_count + 1)
+        self.assertEqual(data['products']['1'], 2)
+    
+    def test_add_existing_product_to_cart(self):
+        """ Add an existing product to the cart """
+        product_count = len(server.Shopcart.find(4).products)
+        data = {'products': {5: 2}}
+        
+        resp = self.app.post('/shopcarts/4/products', data=json.dumps(data), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data['products']), product_count)
+        self.assertEqual(data['products']['5'], 9)
+    
+    def test_add_product_to_nonexistent_cart(self):
+        """ Add a product to a nonexistent cart """
+        data = {'products': {1: 2}}
+        
+        resp = self.app.post('/shopcarts/100/products', data=json.dumps(data), content_type='application/json')
+        
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_all_shopcart(self):
         """ List All Shopcarts """

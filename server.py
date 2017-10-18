@@ -111,6 +111,22 @@ def update_shopcart(uid,pid):
 
 
 ######################################################################
+# ADD A PRODUCT TO A SHOPCART
+######################################################################
+@app.route('/shopcarts/<int:uid>/products', methods=['POST'])
+def add_product(uid):
+    """Add a product to the shopcart with the given uid"""
+    cart = Shopcart.find(uid)
+
+    if not cart:
+        return jsonify("Cart with id '{}' was not found.".format(uid)), status.HTTP_404_NOT_FOUND
+
+    cart.deserialize(request.get_json())
+    cart.uid = uid
+    cart.save()
+    return make_response(jsonify(cart.serialize()), status.HTTP_200_OK)
+
+######################################################################
 # DELETE A PRODUCT FROM A SHOPCART
 ######################################################################
 @app.route('/shopcarts/<int:uid>/products/<int:pid>', methods=['DELETE'])
