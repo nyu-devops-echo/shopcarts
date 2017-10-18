@@ -5,7 +5,7 @@ from models.shopcart import Shopcart
 from models.dataerror import DataValidationError
 
 app = Flask(__name__)
-DEBUG = (os.getenv('DEBUG', 'False') == 'True')
+DEBUG = (os.getenv('DEBUG', 'True') == 'True')
 PORT = os.getenv('PORT', '5000')
 
 ######################################################################
@@ -99,6 +99,9 @@ def delete_product(uid, pid):
 @app.route('/shopcarts', methods=['GET'])
 def get_all_shopcarts():
     carts = Shopcart.all()
+    pid = request.args.get('pid')
+    if pid:
+        carts = Shopcart.find_by_product(int(pid) ) 
     message = [cart.serialize() for cart in carts]
     rc = status.HTTP_200_OK
     return jsonify(message), rc
