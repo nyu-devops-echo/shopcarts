@@ -23,10 +23,20 @@ class Shopcart(object):
     def save(self):
         """ Saves a Shopcart in the database """
         Shopcart.__data.append(self)
+    
+    def add_products(self, products):
+        if type(products) != dict :
+            raise DataValidationError('Invalid products: body of request contained bad or no data')
+        
+        for pid, quantity in products.items():
+            self.add_product(int(pid), quantity)
 
     def add_product(self, pid, quant=1):
         """ Adds a tuple of product, quantity to the product dict """
-        pq_tup = (pid,quant)
+        if pid in self.products:
+            quant += self.products[pid]
+
+        pq_tup = (pid, quant)
         self.products.update( self.__validate_products(pq_tup) )
 
     def delete(self):

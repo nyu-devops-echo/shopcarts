@@ -119,6 +119,15 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual( len(s.products) ,2 )
         # It's the correct one with correct quant
         self.assertEqual( s.products[34] , 55 )
+    
+    def test_adding_a_product_that_already_exists(self):
+        """ Test to add a product that exists in a cart """
+        shopcart = Shopcart(7, {1: 5})
+        shopcart.save()
+
+        shopcart.add_product(1, 5)
+
+        self.assertEqual(shopcart.products[1], 10)
 
     def test_adding_an_invalid_product(self):
         """ Test to add invalid product"""
@@ -213,6 +222,23 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual(len(Shopcart.find_by_product(6)), 2)
         self.assertEqual(len(Shopcart.find_by_product(7)), 1)
         self.assertEqual(len(Shopcart.find_by_product(1)), 0)   
+    
+    def test_add_multiple_products(self):
+        """ Add multiple products to an existing cart """
+        cart = Shopcart(1, {1: 1})
+        cart.save()
+
+        cart.add_products({1: 2, 2: 4})
+
+        self.assertEqual(len(cart.products), 2)
+        self.assertEqual(cart.products[1], 3)
+        self.assertEqual(cart.products[2], 4)
+
+    def test_add_products_with_invalid_type(self):
+        """ Try to add multiple products not as a dict """
+        cart = Shopcart(1)
+        with self.assertRaises(DataValidationError):
+            cart.add_products([(1, 2), (2, 4)])
 
 if __name__ == '__main__':
     unittest.main()
