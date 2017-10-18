@@ -238,6 +238,5 @@ class TestServer(unittest.TestCase):
         cart = server.Shopcart.find(2)
         self.assertEqual( (5 in cart.products), False)
 
-
 if __name__ == '__main__':
     unittest.main()

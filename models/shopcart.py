@@ -52,11 +52,13 @@ class Shopcart(object):
             try:
                 if type( data['products'] ) == dict:
                     # ** JSON.DUMP MAKES KEYS TO STR
-                    prods = { int(p):int(q) for (p,q) in data['products'].items() }
-                    for pid,quant in prods.items():
-                        if quant == 0:
-                            self.delete_product(pid)
-                            prods.pop(pid,None)
+                    # See if needs to delete a product 
+                    prods ={}
+                    for (pid,quant) in data['products'].items():
+                        if int(quant) == 0:
+                            self.delete_product( int(pid) )
+                        else:
+                            prods.update( {int(pid):int(quant)} )
                 else:
                     prods = int( data['products'] )
                 self.products.update( self.__validate_products( prods ) )
