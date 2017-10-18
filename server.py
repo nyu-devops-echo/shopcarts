@@ -93,6 +93,16 @@ def delete_product(uid, pid):
         cart.delete_product(pid)
     return make_response('', status.HTTP_204_NO_CONTENT)
 
+######################################################################
+# List all Shopcarts
+######################################################################
+@app.route('/shopcarts', methods=['GET'])
+def get_all_shopcarts():
+    carts = Shopcart.all()
+    message = [cart.serialize() for cart in carts]
+    rc = status.HTTP_200_OK
+    return jsonify(message), rc
+
 if __name__ == "__main__":
     # dummy data for server testing
     app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)
