@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request, url_for, make_response
+from flask import Flask, jsonify, request, url_for, make_response, abort
 from flask_api import status
 from models.shopcart import Shopcart
 from models.dataerror import DataValidationError
@@ -82,6 +82,33 @@ def create_shopcart():
     message = cart.serialize()
     location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED, { 'Location': location_url })
+    
+######################################################################
+# UPDATE AN EXISTING Shopcart product
+######################################################################
+@app.route('/shopcarts/<int:uid>/products/<int:pid>', methods=['PUT'])
+def update_shopcart(uid,pid):
+    """
+    Update a Shopcart
+    This endpoint will update a Shopcart based the body that is posted
+    """
+    check_content_type('application/json')
+    cart = Shopcart.find(uid)
+    if not cart:
+        message = { 'error' : 'Shopcart with id: %d was not found' % uid }
+        rc = status.HTTP_404_NOT_FOUND
+        return make_response(jsonify(message),rc)
+
+    prods_cart= cart.serialize()['products']
+    if not pid in prods_cart.keys():
+        message = { 'error' : 'Product %d is not on shopcart %d' % (pid,uid) }
+        rc = status.HTTP_404_NOT_FOUND
+        return make_response(jsonify(message),rc)
+
+    cart.deserialize( request.get_json() )
+    cart.save()
+    return make_response( jsonify( cart.serialize() ), status.HTTP_201_CREATED)
+
 
 ######################################################################
 # DELETE A PRODUCT FROM A SHOPCART
@@ -92,6 +119,21 @@ def delete_product(uid, pid):
     if cart:
         cart.delete_product(pid)
     return make_response('', status.HTTP_204_NO_CONTENT)
+
+
+
+######################################################################
+#  U T I L I T Y   F U N C T I O N S
+######################################################################
+
+def check_content_type(content_type):
+    """ Checks that the media type is correct """
+    if request.headers['Content-Type'] == content_type:
+        return
+    #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
+    abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
+
+
 
 ######################################################################
 # List all Shopcarts

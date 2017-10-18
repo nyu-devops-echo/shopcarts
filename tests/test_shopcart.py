@@ -198,7 +198,11 @@ class TestShopcart(unittest.TestCase):
         
         self.assertEqual(len(Shopcart.all()), 1)
 
-
+    def test_desirialize_error(self):
+        """Test deserialize error"""
+        cart = Shopcart()
+        with self.assertRaises( DataValidationError ):
+            cart.deserialize(5)
 
 if __name__ == '__main__':
     unittest.main()
