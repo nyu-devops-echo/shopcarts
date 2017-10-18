@@ -146,6 +146,83 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(n_cart, len(server.Shopcart.all()) )
 
+    def test_update_product(self):
+        """Updating a product"""
+        cart = server.Shopcart.find(2)
+
+        self.assertIsNotNone(cart)
+        cart.add_product(pid=2,quant=3)
+        cart.add_product( pid = 3, quant= 5 )
+        
+        prods_in_cart = cart.serialize()['products']
+        self.assertEqual(prods_in_cart, {2:3,3:5} )
+        
+        pid_to_update= 3
+        quant_to_update= 2
+        data = json.dumps( {'products': {pid_to_update:quant_to_update} } )
+        
+        resp = self.app.put('/shopcarts/2/products/' + str(pid_to_update), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        new_json = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(new_json['products']["3"], 2 )
+
+    def test_update_product(self):
+        """Updating a product to 0"""
+        cart = server.Shopcart.find(2)
+
+        self.assertIsNotNone(cart)
+        cart.add_product(pid=2,quant=3)
+        cart.add_product( pid = 3, quant= 5 )
+        
+        prods_in_cart = cart.serialize()['products']
+        self.assertEqual(prods_in_cart, {2:3,3:5} )
+        
+        pid_to_update= 3
+        quant_to_update= 0
+        data = json.dumps( {'products': {pid_to_update:quant_to_update} } )
+        
+        resp = self.app.put('/shopcarts/2/products/' + str(pid_to_update), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        new_json = json.loads(resp.data.decode('utf8'))
+        self.assertNotIn("3",new_json['products'] )
+
+    def test_update_product_not_existing_shopcart(self):
+        """Updating a product of an unexistent shopcart"""
+        self.assertIsNone(server.Shopcart.find(3) )
+        pid_to_update= 3
+        quant_to_update= 2
+        data = json.dumps( {'products': {pid_to_update:quant_to_update} } )
+        
+        resp = self.app.put('/shopcarts/3/products/' + str(pid_to_update), data=data, content_type='application/json')
+        
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_product_not_existing_before(self):
+        """Updating a product of an unexiting product in an existing cart"""
+        cart = server.Shopcart.find(2)
+        self.assertIsNotNone(cart)        
+        prods_in_cart = cart.serialize()['products']
+        self.assertEqual(prods_in_cart, {} )
+        
+        pid_to_update = 1
+        quant_to_update = 7
+        self.assertNotIn( pid_to_update, prods_in_cart.keys() )
+        
+        data = json.dumps( {'products': {pid_to_update:quant_to_update} } )
+        resp = self.app.put('/shopcarts/2/products/' + str(pid_to_update), 
+                            data=data, content_type='application/json')
+        
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_content_type_media_error(self):
+        """Not supported media"""    
+        data = '6'    
+        resp = self.app.put('/shopcarts/3/products/' + str(1), 
+                            data=data, content_type='application/text')
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE )
+
     def test_delete_a_product_from_shopcart(self):
         """ Test Delete a Product From A Shopcart """
         # Delete products with ID of 5 from cart 1
@@ -167,6 +244,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual( resp.status_code, status.HTTP_200_OK )
         carts = json.loads(resp.data.decode('utf8'))
         self.assertEqual( len(carts), 3)
+
 
 if __name__ == '__main__':
     unittest.main()
