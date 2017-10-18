@@ -104,3 +104,12 @@ class Shopcart(object):
         if ( all( isinstance(pid,int) for pid in products.keys() ) and
              all( (isinstance(q,int) and (q > 0)) for q in products.values() ) ):
             return products
+
+    @staticmethod
+    def find_by_product(pid):
+        """ Returns all of the Shopcarts that have a specific id
+        Args:
+            pid (int): product id to query
+        """
+        return [cart for cart in Shopcart.__data if pid in cart.products.keys()  ]
+

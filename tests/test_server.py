@@ -161,6 +161,31 @@ class TestServer(unittest.TestCase):
         cart = server.Shopcart.find(2)
         self.assertEqual( (5 in cart.products), False)
 
+    def test_query_product(self):
+        cart = server.Shopcart.find(1)
+        cart.add_product( 5 )
+        cart.add_product( 6 )
+        cart.save() 
+        cart = server.Shopcart.find(2)
+        cart.add_product( 6 )
+        cart.save()
+        self.assertEqual(len(server.Shopcart.find_by_product(123)), 0)
+        # ?productid=123
+        resp = self.app.get('/shopcarts', query_string='productid=123' )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        self.assertEqual(len(resp.data), 0)
+        data = json.loads(resp.data)
+        self.assertEqual(data, [] )
+
+        #count for 5
+        all_carts = server.Shopcart.all()
+        n = len([cart for cart in all_carts if 5 in cart.products.keys() ])
+        resp = self.app.get('/shopcarts', query_string='productid=5' )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), n  )
+
+        
 
 if __name__ == '__main__':
     unittest.main()
