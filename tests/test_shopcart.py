@@ -188,6 +188,16 @@ class TestShopcart(unittest.TestCase):
         cart.delete_product(5)
         self.assertEqual( len(cart.products), 0 )
 
+    def test_shopcarts_are_pruned(self):
+        """ Test empty shopcarts are pruned """
+        Shopcart(1).save()
+        Shopcart(2).save()
+        Shopcart(3, { 5 : 7}).save()
+
+        Shopcart.prune()
+        
+        self.assertEqual(len(Shopcart.all()), 1)
+
     def test_desirialize_error(self):
         """Test deserialize error"""
         cart = Shopcart()
