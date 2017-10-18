@@ -103,6 +103,14 @@ def get_all_shopcarts():
     rc = status.HTTP_200_OK
     return jsonify(message), rc
 
+######################################################################
+# Prune empty Shopcarts
+######################################################################
+@app.route('/shopcarts/prune', methods=['PUT'])
+def prune_empty_shopcarts():
+    Shopcart.prune()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
 if __name__ == "__main__":
     # dummy data for server testing
     app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)

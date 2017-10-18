@@ -82,6 +82,11 @@ class Shopcart(object):
         return None
 
     @staticmethod
+    def prune():
+        """ Delete empty shopcarts """
+        Shopcart.__data = [cart for cart in Shopcart.__data if cart.products]
+
+    @staticmethod
     def __validate_products(products):
         """ Validates products or raises an error"""
         # Product is none so set an empty list

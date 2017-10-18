@@ -167,6 +167,13 @@ class TestServer(unittest.TestCase):
         self.assertEqual( resp.status_code, status.HTTP_200_OK )
         carts = json.loads(resp.data.decode('utf8'))
         self.assertEqual( len(carts), 3)
+    
+    def test_prune_empty_shopcarts(self):
+        """ Prune empty shopcarts """
+        resp = self.app.put('/shopcarts/prune')
+
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(server.Shopcart.all()), 1)
 
 if __name__ == '__main__':
     unittest.main()
