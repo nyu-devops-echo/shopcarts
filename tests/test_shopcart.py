@@ -186,7 +186,7 @@ class TestShopcart(unittest.TestCase):
         cart = Shopcart(1, { 5 : 7})
         cart.save()
         cart.delete_product(5)
-        self.assertEqual( len(cart.products), 0 )
+        self.assertEqual( len(cart.products), 0 )     
 
     def test_shopcarts_are_pruned(self):
         """ Test empty shopcarts are pruned """
@@ -203,6 +203,16 @@ class TestShopcart(unittest.TestCase):
         cart = Shopcart()
         with self.assertRaises( DataValidationError ):
             cart.deserialize(5)
+
+    def test_Get_shopcarts_with_a_specific_product(self):
+        Shopcart(1, { 5 : 7 , 3:5}).save()
+        Shopcart(2, { 6 : 1 }).save()
+        Shopcart(3, { 5 : 1, 6:4, 7:3 }).save()
+        self.assertEqual(len(Shopcart.all()), 3)
+        self.assertEqual(len(Shopcart.find_by_product(5)), 2)
+        self.assertEqual(len(Shopcart.find_by_product(6)), 2)
+        self.assertEqual(len(Shopcart.find_by_product(7)), 1)
+        self.assertEqual(len(Shopcart.find_by_product(1)), 0)   
 
 if __name__ == '__main__':
     unittest.main()

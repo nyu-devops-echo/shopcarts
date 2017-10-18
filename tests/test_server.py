@@ -7,6 +7,7 @@ class TestServer(unittest.TestCase):
     """ Shopcarts Server Tests """
     def setUp(self):
         self.app = server.app.test_client()
+        server.app.debug = True
         server.Shopcart(1).save()
         server.Shopcart(2).save()
         # uid 3 is used in test_get_nonexistent_shopcart
@@ -252,6 +253,29 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(server.Shopcart.all()), 1)
 
+    def test_query_product(self):
+        cart = server.Shopcart.find(1)
+        cart.add_product( 5 )
+        cart.add_product( 6 )
+        cart.save() 
+        cart = server.Shopcart.find(2)
+        cart.add_product( 6 )
+        cart.save()
+        #count for 5 should have cart 1, 4
+        resp = self.app.get('/shopcarts', query_string='pid=5' )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual( {1,4},  { c['uid'] for c in data }  )
+        
+    def test_query_nonexintent_product(self):
+        """ Query a product that does not exists"""
+        self.assertEqual(len(server.Shopcart.find_by_product(123)), 0)
+        resp = self.app.get('/shopcarts', query_string='pid=123' )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(data, [])
+        
+        
 
 if __name__ == '__main__':
     unittest.main()
