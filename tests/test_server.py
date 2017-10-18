@@ -247,7 +247,7 @@ class TestServer(unittest.TestCase):
     
     def test_prune_empty_shopcarts(self):
         """ Prune empty shopcarts """
-        resp = self.app.put('/shopcarts/prune')
+        resp = self.app.delete('/shopcarts/prune')
 
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(server.Shopcart.all()), 1)

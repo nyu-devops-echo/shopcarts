@@ -148,7 +148,7 @@ def get_all_shopcarts():
 ######################################################################
 # Prune empty Shopcarts
 ######################################################################
-@app.route('/shopcarts/prune', methods=['PUT'])
+@app.route('/shopcarts/prune', methods=['DELETE'])
 def prune_empty_shopcarts():
     Shopcart.prune()
     return make_response('', status.HTTP_204_NO_CONTENT)
