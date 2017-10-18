@@ -242,7 +242,7 @@ class TestServer(unittest.TestCase):
     def test_add_new_product_to_cart(self):
         """ Add a new product to the cart """
         product_count = len(server.Shopcart.find(2).products)
-        data = {'products': {1: 2}}
+        data = {1: 2}
         
         resp = self.app.post('/shopcarts/2/products', data=json.dumps(data), content_type='application/json')
         data = json.loads(resp.data.decode('utf8'))
@@ -251,10 +251,23 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(data['products']), product_count + 1)
         self.assertEqual(data['products']['1'], 2)
     
+    def test_add_multiple_new_products_to_cart(self):
+        """ Add multiple new products to the cart """
+        product_count = len(server.Shopcart.find(2).products)
+        data = {1: 2, 2: 4}
+        
+        resp = self.app.post('/shopcarts/2/products', data=json.dumps(data), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data['products']), product_count + 2)
+        self.assertEqual(data['products']['1'], 2)
+        self.assertEqual(data['products']['2'], 4)
+    
     def test_add_existing_product_to_cart(self):
         """ Add an existing product to the cart """
         product_count = len(server.Shopcart.find(4).products)
-        data = {'products': {5: 2}}
+        data = {5: 2}
         
         resp = self.app.post('/shopcarts/4/products', data=json.dumps(data), content_type='application/json')
         data = json.loads(resp.data.decode('utf8'))
@@ -263,9 +276,30 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(data['products']), product_count)
         self.assertEqual(data['products']['5'], 9)
     
+    def test_add_multiple_existing_products_to_cart(self):
+        """ Add multiple existing products to the cart """
+        product_count = len(server.Shopcart.find(4).products)
+        data = {5: 2, 13: 2}
+        
+        resp = self.app.post('/shopcarts/4/products', data=json.dumps(data), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data['products']), product_count)
+        self.assertEqual(data['products']['5'], 9)
+        self.assertEqual(data['products']['13'], 23)
+    
+    def test_add_products_in_bad_format_to_cart(self):
+        """ Try to add malformed products to cart """
+        data = [(1, 2), (2, 4)]        
+        resp = self.app.post('/shopcarts/2/products', data=json.dumps(data), content_type='application/json')
+        
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(server.Shopcart.find(2).products), 0)
+    
     def test_add_product_to_nonexistent_cart(self):
         """ Add a product to a nonexistent cart """
-        data = {'products': {1: 2}}
+        data = {1: 2}
         
         resp = self.app.post('/shopcarts/100/products', data=json.dumps(data), content_type='application/json')
         

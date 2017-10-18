@@ -121,9 +121,13 @@ def add_product(uid):
     if not cart:
         return jsonify("Cart with id '{}' was not found.".format(uid)), status.HTTP_404_NOT_FOUND
 
-    cart.deserialize(request.get_json())
-    cart.uid = uid
-    cart.save()
+    try:
+        cart.add_products(request.get_json())
+        cart.save()
+    except DataValidationError as e:
+        message = { 'error': e.args[0] }
+        return jsonify(message), status.HTTP_400_BAD_REQUEST
+
     return make_response(jsonify(cart.serialize()), status.HTTP_200_OK)
 
 ######################################################################
