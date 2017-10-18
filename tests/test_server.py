@@ -7,6 +7,7 @@ class TestServer(unittest.TestCase):
     """ Shopcarts Server Tests """
     def setUp(self):
         self.app = server.app.test_client()
+        server.app.debug = True
         server.Shopcart(1).save()
         server.Shopcart(2).save()
         # uid 3 is used in test_get_nonexistent_shopcart
@@ -161,6 +162,13 @@ class TestServer(unittest.TestCase):
         cart = server.Shopcart.find(2)
         self.assertEqual( (5 in cart.products), False)
 
+    def test_get_all_shopcart(self):
+        """ List All Shopcarts """
+        resp = self.app.get('/shopcarts')
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        carts = json.loads(resp.data.decode('utf8'))
+        self.assertEqual( len(carts), 3)
+
     def test_query_product(self):
         cart = server.Shopcart.find(1)
         cart.add_product( 5 )
@@ -171,20 +179,17 @@ class TestServer(unittest.TestCase):
         cart.save()
         self.assertEqual(len(server.Shopcart.find_by_product(123)), 0)
         # ?productid=123
-        resp = self.app.get('/shopcarts', query_string='productid=123' )
+        resp = self.app.get('/shopcarts', query_string='pid=123' )
         self.assertEqual( resp.status_code, status.HTTP_200_OK )
-        self.assertEqual(len(resp.data), 0)
-        data = json.loads(resp.data)
-        self.assertEqual(data, [] )
-
-        #count for 5
-        all_carts = server.Shopcart.all()
-        n = len([cart for cart in all_carts if 5 in cart.products.keys() ])
-        resp = self.app.get('/shopcarts', query_string='productid=5' )
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(data, [])
+        
+        #count for 5 should have cart 1, 4
+        resp = self.app.get('/shopcarts', query_string='pid=5' )
         self.assertEqual( resp.status_code, status.HTTP_200_OK )
-        data = json.loads(resp.data)
-        self.assertEqual(len(data), n  )
-
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual( {1,4},  { c['uid'] for c in data }  )
+        
         
 
 if __name__ == '__main__':
