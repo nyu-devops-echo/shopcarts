@@ -254,18 +254,19 @@ class TestServer(unittest.TestCase):
         cart = server.Shopcart.find(2)
         cart.add_product( 6 )
         cart.save()
-        self.assertEqual(len(server.Shopcart.find_by_product(123)), 0)
-        # ?productid=123
-        resp = self.app.get('/shopcarts', query_string='pid=123' )
-        self.assertEqual( resp.status_code, status.HTTP_200_OK )
-        data = json.loads(resp.data.decode('utf8'))
-        self.assertEqual(data, [])
-        
         #count for 5 should have cart 1, 4
         resp = self.app.get('/shopcarts', query_string='pid=5' )
         self.assertEqual( resp.status_code, status.HTTP_200_OK )
         data = json.loads(resp.data.decode('utf8'))
         self.assertEqual( {1,4},  { c['uid'] for c in data }  )
+        
+    def test_query_nonexintent_product(self):
+        """ Query a product that does not exists"""
+        self.assertEqual(len(server.Shopcart.find_by_product(123)), 0)
+        resp = self.app.get('/shopcarts', query_string='pid=123' )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(data, [])
         
         
 
