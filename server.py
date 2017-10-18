@@ -121,6 +121,7 @@ def delete_product(uid, pid):
     return make_response('', status.HTTP_204_NO_CONTENT)
 
 
+
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
@@ -132,6 +133,17 @@ def check_content_type(content_type):
     #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
 
+
+
+######################################################################
+# List all Shopcarts
+######################################################################
+@app.route('/shopcarts', methods=['GET'])
+def get_all_shopcarts():
+    carts = Shopcart.all()
+    message = [cart.serialize() for cart in carts]
+    rc = status.HTTP_200_OK
+    return jsonify(message), rc
 
 
 if __name__ == "__main__":
