@@ -163,12 +163,12 @@ class TestServer(unittest.TestCase):
         data = json.dumps( {'products': {pid_to_update:quant_to_update} } )
         
         resp = self.app.put('/shopcarts/2/products/' + str(pid_to_update), data=data, content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         new_json = json.loads(resp.data.decode('utf8'))
         self.assertEqual(new_json['products']["3"], 2 )
 
-    def test_update_product(self):
+    def test_update_product_to_0(self):
         """Updating a product to 0"""
         cart = server.Shopcart.find(2)
 
@@ -184,7 +184,7 @@ class TestServer(unittest.TestCase):
         data = json.dumps( {'products': {pid_to_update:quant_to_update} } )
         
         resp = self.app.put('/shopcarts/2/products/' + str(pid_to_update), data=data, content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         new_json = json.loads(resp.data.decode('utf8'))
         self.assertNotIn("3",new_json['products'] )
