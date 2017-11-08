@@ -31,8 +31,10 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available.
   config.vm.provision "shell", inline: <<-SHELL
+    wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+    echo "deb http://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
     apt-get update
-    apt-get install -y git python3 python3-pip
+    apt-get install -y git python3 python3-pip cf-cli
     pip3 install -U pip
     apt-get -y autoremove
     # Install app dependencies
