@@ -107,7 +107,7 @@ def update_shopcart(uid,pid):
 
     cart.deserialize( request.get_json() )
     cart.save()
-    return make_response( jsonify( cart.serialize() ), status.HTTP_201_CREATED)
+    return make_response(jsonify(cart.serialize()), status.HTTP_200_OK)
 
 
 ######################################################################
