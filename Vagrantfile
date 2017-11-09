@@ -31,6 +31,7 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available.
   config.vm.provision "shell", inline: <<-SHELL
+    curl -fsSL https://clis.ng.bluemix.net/install/linux | sh
     apt-get update
     apt-get install -y git python3 python3-pip
     pip3 install -U pip
