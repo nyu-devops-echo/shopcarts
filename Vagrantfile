@@ -33,11 +33,27 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     curl -fsSL https://clis.ng.bluemix.net/install/linux | sh
     apt-get update
-    apt-get install -y git python3 python3-pip
+    apt-get install -y git python3 python3-pip mysql-client-core-5.7
     pip3 install -U pip
     apt-get -y autoremove
     # Install app dependencies
     cd /vagrant
     sudo pip install -r requirements.txt
   SHELL
+
+  ######################################################################
+  # Add MySQL docker container
+  ######################################################################
+  config.vm.provision "shell", inline: <<-SHELL
+    # Prepare MySQL data share
+    sudo mkdir -p /var/lib/mysql
+    sudo chown ubuntu:ubuntu /var/lib/mysql
+  SHELL
+
+  # Add MySQL docker container
+  config.vm.provision "docker" do |d|
+    d.pull_images "mysql"
+    d.run "mysql",
+      args: "--restart=always -d --name mysql -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root"
+  end
 end
