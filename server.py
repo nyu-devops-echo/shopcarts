@@ -14,9 +14,11 @@ PORT = os.getenv('PORT', '5000')
 @app.route('/')
 def index():
     """ Root URL response """
-    return jsonify(name='Shopcarts REST API Service',
-                   version='1.0',
-                   description= 'This is the REST API Service for the shopcarts.'), status.HTTP_200_OK
+    # return jsonify(name='Shopcarts REST API Service',
+    #                version='1.0',
+    #                description= 'This is the REST API Service for the shopcarts.'), status.HTTP_200_OK
+
+    return app.send_static_file('index.html')
 
 ######################################################################
 # RETRIEVE A SHOPCART

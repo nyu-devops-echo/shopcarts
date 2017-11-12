@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shopcart Demo RESTful Service</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/stylesheets/style.css">
+  </head>
+  <body>
+      <table>
+		<tr>
+            <td style= "width:30%;">
+              <img class = "newappIcon" src="static/images/icon.png">
+            </td>
+			<td>
+				<h1 id = "message">Shopcart Demo REST API Service</h1>
+				<p class='description'>
+				GET <a href="/shopcarts" id = "get_shopcarts">/shopcarts</a> to list all shopcarts.
+				<br><br>
+                <!-- GET <a href="/pets?category=dog">/pets?category=dog</a> to see all of the pets in the 'dog' category.
+        <br><br> -->
+        
+				GET /shopcarts/{id} retrieves a shopcart from the DB using an ID.
+				<br><br>
+				PUT /shopcarts/{uid}/products/{pid} updates a shopcart using an ID.
+				<br><br>
+				DELETE /shopcarts/{id} removes a shopcart from the DB using an ID.
+				<br><br>
+        POST /shopcarts creates a new shopcart.
+        
+
+                <!-- <p>Example Data:</p>
+                <pre>
+    {
+        "name": "bowser",
+        "category": "dog"
+    }
+                </pre> -->
+
+                <!-- Try it now:
+                <form id="create_pets" action="/pets" method="post" enctype="application/json">
+                    <input type="hidden" name="available" value="True" />
+                    <div>
+                      <label for="name">What is the name of the pet?</label>
+                      <input name="name" id="name" value="Bowser">
+                    </div>
+                    <div>
+                      <label for="category">What category is the pet?</label>
+                      <input name="category" id="category" value="Dog">
+                    </div>
+                    <div>
+                      <button id="submit">Create Pet</button>
+                    </div>
+                </form> -->
+			</td>
+		</tr>
+	</table>
+  </body>
+</html>
