@@ -33,14 +33,14 @@ class Product(db.Model):
     """no need to define the __init__ method for Product
     because SQLAlchemy adds an implicit constructor to all model classes 
     which accepts keyword arguments for all its columns and relationships"""
-    # def __init__(self, id=0, name='', price=0.0, description=None):
-    #     """
-    #     Initializing Product
-    #     """
-    #     self.id = int(id)
-    #     self.name = name
-    #     self.price = float(price)
-    #     self.description = description
+    def __init__(self, id=0, name='', price=0.0, description=None):
+        """
+        Initializing Product
+        """
+        self.id = int(id)
+        self.name = name
+        self.price = float(price)
+        self.description = description
 
 
 ######################################################################
