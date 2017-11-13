@@ -1,12 +1,43 @@
 import os
 from flask import Flask, jsonify, request, url_for, make_response, abort
 from flask_api import status
+from flask_sqlalchemy import SQLAlchemy
+
 from models.shopcart import Shopcart
+# from models.product import Product, app, db
 from models.dataerror import DataValidationError
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/db'
+db = SQLAlchemy(app)
+# engine = create_engine('mysql+mysqldb://scott:tiger@localhost/foo')
+
 DEBUG = (os.getenv('DEBUG', 'True') == 'True')
 PORT = os.getenv('PORT', '5000')
+
+class Product(db.Model):
+    """This is the model for the products in the shopping carts
+    Assumptions: (*** FOR SPRINT 0 ***)
+        - In memory persistance 
+        - Property includes:
+            - product id
+            - name
+            - price 
+            - description
+        - Model should only initially include init method and product fields.
+    """ 
+    
+    __data = []
+    __index = 0
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    price = db.Column(db.Float, unique=False, nullable=False)
+    description = db.Column(db.String(140), unique=False, nullable=True)
+
+    def __repre__(self):
+        return '<Name %r>' % self.name
+
 
 ######################################################################
 # GET INDEX
@@ -156,6 +187,17 @@ def check_content_type(content_type):
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
 
 
+@app.before_first_request
+def init_db():
+    """ Initilize the Product table in database"""
+    db.create_all()
+    p1 = Product(id=1,name='Apple',price=1.2,description='Fruit')
+    p2 = Product(id=2,name='Pen',price=3.4,description='stationery')
+    p3 = Product(id=3,name='Pineapple',price=2.3,description='Fruit')
+    db.session.add(p1)
+    ab.session.add(p2)
+    db.session.add(p3)
+    db.session.commit()
 
 ######################################################################
 # List all Shopcarts
