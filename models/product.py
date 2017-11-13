@@ -1,4 +1,3 @@
-
 class Product(object):
     """This is the model for the products in the shopping carts
     Assumptions: (*** FOR SPRINT 0 ***)

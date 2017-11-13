@@ -6,3 +6,5 @@ applications:
   name: nyu-shopcart-service-f17
   host: nyu-shopcart-service-f17
   disk_quota: 512M
+  services:
+  - MySQL

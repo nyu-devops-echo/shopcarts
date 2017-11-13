@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
     curl -fsSL https://clis.ng.bluemix.net/install/linux | sh
     apt-get update
     apt-get install -y git python3 python3-pip mysql-client-core-5.7
-    pip3 install -U pip
+    pip3 install -U pip PyMySQL
     apt-get -y autoremove
     # Install app dependencies
     cd /vagrant
