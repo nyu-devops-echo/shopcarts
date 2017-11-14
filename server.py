@@ -2,6 +2,7 @@ import os
 from flask import Flask, jsonify, request, url_for, make_response, abort
 from flask_api import status
 from models.shopcart import Shopcart
+from models.product import Product
 from models.dataerror import DataValidationError
 
 app = Flask(__name__)
@@ -153,6 +154,10 @@ def check_content_type(content_type):
     #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
 
+@app.before_first_request
+def init_db():
+    """Initialize the Product table"""
+    Product.init_db()
 
 
 ######################################################################
