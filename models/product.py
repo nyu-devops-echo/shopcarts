@@ -5,15 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
 # Local database credentials
-HOSTNAME = '127.0.0.1'
+HOSTNAME = '127.0.0.2'
 PORT = '3306'
-DATABASE = 'localdb'
+DATABASE = 'mysql'
 USERNAME = 'root'
 PASSWORD = 'root'
 DB_URI = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(USERNAME,PASSWORD,HOSTNAME,PORT,DATABASE)
 
 # Get service credentials from Bluemix
-if 'VCAP_SERVICES' in os.environ: 
+if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.environ['VCAP_SERVICES'])
     creds = vcap['cleardb'][0]['credentials']
 
@@ -28,29 +28,20 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 db = SQLAlchemy(app)
 
-# create database engineer
-engine = create_engine(DB_URI)
-# create_str = "CREATE DATABASE IF NOT EXISTS %s ;" % (DATABASE)
-# engine.execute(create_str, echo=True)
-conn = engine.connect()
-conn.execute("commit")
-conn.execute("create database if not exists localdb")
-conn.close()
-
 DEBUG = (os.getenv('DEBUG', 'True') == 'True')
 PORT = os.getenv('PORT', '5000')
 
 class Product(db.Model):
     """This is the model for the products in the shopping carts
     Assumptions: (*** FOR SPRINT 0 ***)
-        - In memory persistance 
+        - In memory persistance
         - Property includes:
             - product id
             - name
-            - price 
+            - price
             - description
         - Model should only initially include init method and product fields.
-    """ 
+    """
 
     __data = []
     __index = 0
@@ -88,7 +79,7 @@ class Product(db.Model):
         p3 = Product(id=3,name='Pineapple',price=2.3,description='Fruit')
         p4 = Product(id=4,name='Beef',price=33.0,description='Meat')
         p5 = Product(id=5,name='Notebook',price=0.99,description='Stationery')
-            
+
         # check exist before add
         if db.session.query(Product.id).filter(Product.id==1).count() == 0:
             db.session.add(p1)
