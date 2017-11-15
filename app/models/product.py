@@ -24,7 +24,7 @@ class Product(db.Model):
         # check exist before add
         if not Product.query.get(1):
             db.session.add(p1)
-        if not Product.query.get(1):
+        if not Product.query.get(2):
             db.session.add(p2)
         if not Product.query.get(3):
             db.session.add(p3)

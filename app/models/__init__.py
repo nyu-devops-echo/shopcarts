@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-def init_db(app):
+def init_db(app, migrate_db=True):
     # Get service credentials from Bluemix
     if 'VCAP_SERVICES' in os.environ:
         vcap = json.loads(os.environ['VCAP_SERVICES'])
@@ -20,6 +20,9 @@ def init_db(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 
     db.init_app(app)
+
+    if not migrate_db:
+        return
 
     with app.app_context():
         from .shopcart import Shopcart
