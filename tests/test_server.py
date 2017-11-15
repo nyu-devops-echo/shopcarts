@@ -1,7 +1,7 @@
 import unittest
 import json
 from flask_api import status
-import server
+from app import server
 
 class TestServer(unittest.TestCase):
     """ Shopcarts Server Tests """
