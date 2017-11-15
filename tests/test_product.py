@@ -6,7 +6,7 @@ class TestProduct(unittest.TestCase):
 
     def test_it_can_be_instantiated(self):
         """ Test Instantiation """
-        product = Product(1, "Test", 1.0, "Test Description")
+        product = Product(id=1, name="Test", price=1.0, description="Test Description")
         
         self.assertEqual(product.id, 1)
         self.assertEqual(product.name, "Test")
