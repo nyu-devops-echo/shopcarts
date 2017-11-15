@@ -1,12 +1,9 @@
 import os
-from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask import jsonify, request, url_for, make_response, abort
 from flask_api import status
-from models.shopcart import Shopcart
-from models.dataerror import DataValidationError
-
-app = Flask(__name__)
-DEBUG = (os.getenv('DEBUG', 'True') == 'True')
-PORT = os.getenv('PORT', '5000')
+from .models.shopcart import Shopcart
+from .models.dataerror import DataValidationError
+from . import app
 
 ######################################################################
 # GET INDEX
@@ -109,7 +106,6 @@ def update_shopcart(uid,pid):
     cart.save()
     return make_response(jsonify(cart.serialize()), status.HTTP_200_OK)
 
-
 ######################################################################
 # ADD A PRODUCT TO A SHOPCART
 ######################################################################
@@ -140,21 +136,6 @@ def delete_product(uid, pid):
         cart.delete_product(pid)
     return make_response('', status.HTTP_204_NO_CONTENT)
 
-
-
-######################################################################
-#  U T I L I T Y   F U N C T I O N S
-######################################################################
-
-def check_content_type(content_type):
-    """ Checks that the media type is correct """
-    if request.headers['Content-Type'] == content_type:
-        return
-    #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
-    abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
-
-
-
 ######################################################################
 # List all Shopcarts
 ######################################################################
@@ -177,6 +158,12 @@ def prune_empty_shopcarts():
     Shopcart.prune()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
-if __name__ == "__main__":
-    # dummy data for server testing
-    app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)
+######################################################################
+#  U T I L I T Y   F U N C T I O N S
+######################################################################
+def check_content_type(content_type):
+    """ Checks that the media type is correct """
+    if request.headers['Content-Type'] == content_type:
+        return
+    #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
+    abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))

@@ -1,6 +1,6 @@
 import unittest
-from models.shopcart import Shopcart
-from models.dataerror import DataValidationError
+from app.models.shopcart import Shopcart
+from app.models.dataerror import DataValidationError
 
 class TestShopcart(unittest.TestCase):
     """ Shopcart Model Tests """
