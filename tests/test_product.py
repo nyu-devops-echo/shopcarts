@@ -17,7 +17,6 @@ class TestProduct(unittest.TestCase):
     
     def tearDown(self):
         # Clean up after tests
-        # Product.query.delete()
         db.session.rollback()
 
     def test_it_can_be_instantiated(self):
