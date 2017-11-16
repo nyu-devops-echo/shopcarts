@@ -2,6 +2,7 @@ import unittest
 from app import app
 from app.models import db
 from app.models.product import Product
+from app.models.shopcart import Shopcart
 
 class TestProduct(unittest.TestCase):
     """ Product Model Tests """
@@ -12,13 +13,18 @@ class TestProduct(unittest.TestCase):
         ctx.push()
 
         # Start transaction for testing
-        db.session.begin_nested()
+        self.connection = db.engine.connect()
+        self.trans = self.connection.begin()
+        db.session.configure(bind=self.connection, binds={})
+
+        Shopcart.remove_all()
         Product.query.delete()
-    
+
     def tearDown(self):
         # Clean up after tests
-        # Product.query.delete()
-        db.session.rollback()
+        self.trans.rollback()
+        self.connection.close()
+        db.session.remove()
 
     def test_it_can_be_instantiated(self):
         """ Test Instantiation """

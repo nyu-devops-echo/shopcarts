@@ -2,6 +2,7 @@ import os
 from flask import jsonify, request, url_for, make_response, abort
 from flask_api import status
 from .models.shopcart import Shopcart
+from .models.product import Product
 from .models.dataerror import DataValidationError
 from . import app
 
@@ -22,10 +23,10 @@ def index():
 def get_shopcarts(id):
     cart = Shopcart.find(id)
     if cart:
-        message = { 'uid': cart.uid, 'products': cart.products }
+        message = cart.serialize()
         rc = status.HTTP_200_OK
     else:
-        message = { 'error' : 'Shopcart with id: %s was not found' % str(id) }
+        message = {'error' : 'Shopcart with id: %s was not found' % str(id)}
         rc = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), rc
@@ -53,75 +54,87 @@ def delete_shopcarts(id):
 def create_shopcart():
     """Creates a shopcart and saves it to database"""
     data = request.get_json()
-    try :
-        id = data['uid']
-    except KeyError :
-        message = { 'error': 'POST needs a user id' }
+    try:
+        user_id = data['user_id']
+    except KeyError:
+        message = {'error': 'POST needs a user id'}
         return jsonify(message), status.HTTP_400_BAD_REQUEST
 
-    cart = Shopcart.find(id)
+    cart = Shopcart.find(user_id)
     if cart:
-        message = jsonify({ 'error' : 'Shopcart for user %s already exits' % str(id) })
+        message = jsonify({'error' : 'Shopcart for user %s already exits' % str(user_id)})
         rc = status.HTTP_409_CONFLICT
-        return make_response(message,rc)
+        return make_response(message, rc)
 
     # Create the Cart
-    cart = Shopcart(id)
-    #Validate correct data
+    products = data['products'] if 'products' in data else None
     try:
-        cart.deserialize(  data )
+        cart = Shopcart(user_id, products)
     except DataValidationError as e:
-        message = { 'error': e.args[0] }
+        message = {'error': e.args[0]}
         return jsonify(message), status.HTTP_400_BAD_REQUEST
 
     # If correct save it and return object
     cart.save()
     message = cart.serialize()
-    location_url = url_for('get_shopcarts', id = int( cart.uid ), _external=True)
-    return make_response(jsonify(message), status.HTTP_201_CREATED, { 'Location': location_url })
-    
+    location_url = url_for('get_shopcarts', id=int(cart.user_id), _external=True)
+    return make_response(jsonify(message), status.HTTP_201_CREATED, {'Location': location_url})
+
 ######################################################################
 # UPDATE AN EXISTING Shopcart product
 ######################################################################
-@app.route('/shopcarts/<int:uid>/products/<int:pid>', methods=['PUT'])
-def update_shopcart(uid,pid):
+@app.route('/shopcarts/<int:user_id>/products/<int:pid>', methods=['PUT'])
+def update_shopcart(user_id, pid):
     """
     Update a Shopcart
     This endpoint will update a Shopcart based the body that is posted
     """
     check_content_type('application/json')
-    cart = Shopcart.find(uid)
+    cart = Shopcart.find(user_id)
+
     if not cart:
-        message = { 'error' : 'Shopcart with id: %d was not found' % uid }
+        message = {'error' : 'Shopcart with id: %d was not found' % user_id}
         rc = status.HTTP_404_NOT_FOUND
-        return make_response(jsonify(message),rc)
+        return make_response(jsonify(message), rc)
 
-    prods_cart= cart.serialize()['products']
+    prods_cart = cart.serialize()['products']
     if not pid in prods_cart.keys():
-        message = { 'error' : 'Product %d is not on shopcart %d' % (pid,uid) }
+        message = {'error' : 'Product %d is not on shopcart %d' % (pid, user_id)}
         rc = status.HTTP_404_NOT_FOUND
-        return make_response(jsonify(message),rc)
+        return make_response(jsonify(message), rc)
 
-    cart.deserialize( request.get_json() )
+    data = request.get_json()
+    try:
+        quantity = data['quantity']
+    except KeyError:
+        message = {'error': 'Update product needs a quantity'}
+        return jsonify(message), status.HTTP_400_BAD_REQUEST
+
+    if not isinstance(quantity, int):
+        message = {'error': 'Update product needs a valid quantity'}
+        return jsonify(message), status.HTTP_400_BAD_REQUEST
+
+    cart.update_product(pid, quantity)
     cart.save()
+
     return make_response(jsonify(cart.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 # ADD A PRODUCT TO A SHOPCART
 ######################################################################
-@app.route('/shopcarts/<int:uid>/products', methods=['POST'])
-def add_product(uid):
-    """Add a product to the shopcart with the given uid"""
-    cart = Shopcart.find(uid)
+@app.route('/shopcarts/<int:user_id>/products', methods=['POST'])
+def add_product(user_id):
+    """Add a product to the shopcart with the given user_id"""
+    cart = Shopcart.find(user_id)
 
     if not cart:
-        return jsonify("Cart with id '{}' was not found.".format(uid)), status.HTTP_404_NOT_FOUND
+        return jsonify("Cart with id '{}' was not found.".format(user_id)), status.HTTP_404_NOT_FOUND
 
     try:
         cart.add_products(request.get_json())
         cart.save()
     except DataValidationError as e:
-        message = { 'error': e.args[0] }
+        message = {'error': e.args[0]}
         return jsonify(message), status.HTTP_400_BAD_REQUEST
 
     return make_response(jsonify(cart.serialize()), status.HTTP_200_OK)
@@ -129,9 +142,9 @@ def add_product(uid):
 ######################################################################
 # DELETE A PRODUCT FROM A SHOPCART
 ######################################################################
-@app.route('/shopcarts/<int:uid>/products/<int:pid>', methods=['DELETE'])
-def delete_product(uid, pid):
-    cart = Shopcart.find(uid)
+@app.route('/shopcarts/<int:user_id>/products/<int:pid>', methods=['DELETE'])
+def delete_product(user_id, pid):
+    cart = Shopcart.find(user_id)
     if cart:
         cart.delete_product(pid)
     return make_response('', status.HTTP_204_NO_CONTENT)
@@ -167,3 +180,7 @@ def check_content_type(content_type):
         return
     #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
+
+@app.before_first_request
+def seed_db():
+    Product.seed_db()
