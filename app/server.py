@@ -23,7 +23,7 @@ def index():
 def get_shopcarts(id):
     cart = Shopcart.find(id)
     if cart:
-        message = {'user_id': cart.user_id, 'products': cart.products}
+        message = cart.serialize()
         rc = status.HTTP_200_OK
     else:
         message = {'error' : 'Shopcart with id: %s was not found' % str(id)}

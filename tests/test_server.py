@@ -12,8 +12,12 @@ class TestServer(unittest.TestCase):
         server.app.app_context().push()
 
         # Start transaction for testing
-        db.session.begin_nested()
+        self.connection = db.engine.connect()
+        self.trans = self.connection.begin()
+        db.session.configure(bind=self.connection, binds={})
+
         server.Shopcart.remove_all()
+        server.Product.query.delete()
         server.Product.seed_db()
 
         server.Shopcart(1).save()
@@ -22,8 +26,10 @@ class TestServer(unittest.TestCase):
         server.Shopcart(4, {1: 7, 2: 21, 3: 55}).save()
 
     def tearDown(self):
-         # Clean up after tests
-        db.session.rollback()
+        # Clean up after tests
+        self.trans.rollback()
+        self.connection.close()
+        db.session.remove()
 
     def test_index(self):
         """ Test the Home Page """
@@ -40,7 +46,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data.decode('utf8'))
         self.assertEqual(data['user_id'], 1)
-        self.assertEqual(data['products'], [])
+        self.assertEqual(data['products'], {})
 
     def test_get_nonexistent_shopcart(self):
         """ Test Get a Non-Existent Shopcart """
