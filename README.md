@@ -11,7 +11,7 @@ This is a RESTful shopcarts service that allows users to create, delete, and mod
 
 3. `cd /vagrant`
 
-4. `python run.py`
+4. `python3 run.py`
 
 
 ## Testing
