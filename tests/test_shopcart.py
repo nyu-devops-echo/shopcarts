@@ -56,19 +56,25 @@ class TestShopcart(unittest.TestCase):
         """Test that strings are not accepted as products"""
         # Passing a string
         with self.assertRaises(DataValidationError):
-            shopcart = Shopcart(1, 'product1')
+            Shopcart(1, 'product1')
 
     def test_float_is_invalid_product(self):
         """Test that floats are not accepted as products"""
         # Passing a double
         with self.assertRaises(DataValidationError):
-            shopcart = Shopcart(1, 2.0)
+            Shopcart(1, 2.0)
 
     def test_set_is_invalid_product(self):
         """Test for not allowing sets in products"""
         # Passing a set
         with self.assertRaises(DataValidationError):
-            shopcart = Shopcart(1, {1})
+            Shopcart(1, {1})
+
+    def test_invalid_dict_is_invalid_product(self):
+        """Test that invalid dict are not accepted as products"""
+        # Passing a double
+        with self.assertRaises(DataValidationError):
+            Shopcart(1, {1: "many"})
 
     def test_that_products_are_always_a_list(self):
         """Test that the shopcart model has products as a list"""
@@ -145,7 +151,7 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual(len(s.products), 2)
         # # It's the correct one with correct quant
         self.assertEqual(s.products[1].quantity, 55)
-    
+
     def test_adding_a_product_that_already_exists(self):
         """ Test to add a product that exists in a cart """
         shopcart = Shopcart(7, {1: 5})
@@ -210,46 +216,42 @@ class TestShopcart(unittest.TestCase):
 
     def test_delete_a_shopcart(self):
         """ Test A Shopcart Can Be Deleted """
-        cart = Shopcart(1, {})
+        cart = Shopcart(1, 1)
         cart.save()
-        self.assertEqual( len(Shopcart.all()), 1)
+        self.assertEqual(len(Shopcart.all()), 1)
 
         # Delete the shopcart and make sure it isn't in the database
         cart.delete()
-        self.assertEqual( len(Shopcart.all()), 0)
+        self.assertEqual(len(Shopcart.all()), 0)
 
     def test_delete_products_from_shopcart(self):
-        cart = Shopcart(1, { 5 : 7})
+        """ Test a product in a shopcart can be deleted """
+        cart = Shopcart(1, {1: 2, 5: 7})
         cart.save()
         cart.delete_product(5)
-        self.assertEqual( len(cart.products), 0 )     
+        self.assertEqual(len(cart.products), 1)
 
     def test_shopcarts_are_pruned(self):
         """ Test empty shopcarts are pruned """
         Shopcart(1).save()
         Shopcart(2).save()
-        Shopcart(3, { 5 : 7}).save()
+        Shopcart(3, {5 : 7}).save()
 
         Shopcart.prune()
-        
+
         self.assertEqual(len(Shopcart.all()), 1)
 
-    def test_desirialize_error(self):
-        """Test deserialize error"""
-        cart = Shopcart()
-        with self.assertRaises( DataValidationError ):
-            cart.deserialize(5)
+    def test_get_shopcarts_with_a_specific_product(self):
+        Shopcart(1, {1: 7, 2: 5}).save()
+        Shopcart(2, {3: 1}).save()
+        Shopcart(3, {4: 1, 5: 4, 1: 3}).save()
 
-    def test_Get_shopcarts_with_a_specific_product(self):
-        Shopcart(1, { 5 : 7 , 3:5}).save()
-        Shopcart(2, { 6 : 1 }).save()
-        Shopcart(3, { 5 : 1, 6:4, 7:3 }).save()
         self.assertEqual(len(Shopcart.all()), 3)
-        self.assertEqual(len(Shopcart.find_by_product(5)), 2)
-        self.assertEqual(len(Shopcart.find_by_product(6)), 2)
-        self.assertEqual(len(Shopcart.find_by_product(7)), 1)
-        self.assertEqual(len(Shopcart.find_by_product(1)), 0)   
-    
+
+        self.assertEqual(len(Shopcart.find_by_product(1)), 2)
+        self.assertEqual(len(Shopcart.find_by_product(5)), 1)
+        self.assertEqual(len(Shopcart.find_by_product(6)), 0)
+
     def test_add_multiple_products(self):
         """ Add multiple products to an existing cart """
         cart = Shopcart(1, {1: 1})
@@ -258,14 +260,28 @@ class TestShopcart(unittest.TestCase):
         cart.add_products({1: 2, 2: 4})
 
         self.assertEqual(len(cart.products), 2)
-        self.assertEqual(cart.products[1], 3)
-        self.assertEqual(cart.products[2], 4)
+        self.assertEqual(cart.products[0].quantity, 3)
+        self.assertEqual(cart.products[1].quantity, 4)
 
     def test_add_products_with_invalid_type(self):
         """ Try to add multiple products not as a dict """
         cart = Shopcart(1)
         with self.assertRaises(DataValidationError):
             cart.add_products([(1, 2), (2, 4)])
+
+    def test_create_product_helper_function_with_invalid_pid(self):
+        """ Try to create a product association to a non-existant product """
+        with self.assertRaises(DataValidationError):
+            Shopcart.create_product(10)
+    
+    def test_shopcart_serialization(self):
+        """ Test serializing a shopcart """
+        cart = Shopcart(1, {1: 2, 2: 1})
+        cart = cart.serialize()
+
+        self.assertEqual(cart['user_id'], 1)
+        self.assertEqual(cart['products'][1], 2)
+        self.assertEqual(cart['products'][2], 1)
 
 if __name__ == '__main__':
     unittest.main()

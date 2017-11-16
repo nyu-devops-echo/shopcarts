@@ -2,6 +2,7 @@ import unittest
 from app import app
 from app.models import db
 from app.models.product import Product
+from app.models.shopcart import Shopcart
 
 class TestProduct(unittest.TestCase):
     """ Product Model Tests """
@@ -13,6 +14,7 @@ class TestProduct(unittest.TestCase):
 
         # Start transaction for testing
         db.session.begin_nested()
+        Shopcart.remove_all()
         Product.query.delete()
     
     def tearDown(self):
