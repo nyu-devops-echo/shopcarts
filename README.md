@@ -37,7 +37,7 @@ This is a RESTful shopcarts service that allows users to create, delete, and mod
 #### GET /shopcarts/user_id
   * Retrieves the shopcart for user_id
 
-#### GET /shopcarts/user_id/?pid=product_id
+#### GET /shopcarts?pid=product_id
   * Queries all shopcarts for a specified product_id
 
 #### DELETE /shopcarts/user_id
