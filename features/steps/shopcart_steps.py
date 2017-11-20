@@ -1,8 +1,7 @@
 """
-Pet Steps
-Steps file for Pet.feature
+Shopcart Steps
+Steps file for shopcarts.feature
 """
-
 from os import getenv
 import json
 import requests
@@ -22,4 +21,13 @@ def step_impl(context, message):
 
 @then(u'I should not see "{message}"')
 def step_impl(context, message):
-        assert message not in context.driver.find_element_by_tag_name('body').text
+    assert message not in context.driver.find_element_by_tag_name('body').text
+
+@when(u'I visit "{location}"')
+def step_impl(context,location):
+    """ Make a call to http://localhost:5000 + location"""
+    context.driver.get(context.base_url +  location)
+
+@then(u'I should see "{message}"')
+def step_impl(context, message):
+    assert message in context.driver.find_element_by_tag_name('body').text

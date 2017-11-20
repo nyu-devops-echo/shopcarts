@@ -7,3 +7,9 @@ Scenario: The server is running
     When I visit the "Home Page"
     Then I should see "Shopcarts REST API Service" in the name
     And I should not see "404 Not Found"
+
+Scenario: List all shopcarts
+    When I visit "/shopcarts"
+    Then I should see "[]"
+    And I should not see "404 Not Found"
+
