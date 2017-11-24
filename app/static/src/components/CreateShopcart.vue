@@ -10,6 +10,10 @@
           <input type="number" class="form-control" v-model="user_id" id="user_id" placeholder="Enter User Id" />
         </div>
 
+        <products
+          v-bind="$attrs"
+          v-model="addedProducts" />
+
         <button type="submit" class="btn btn-primary">Create</button>
       </form>
     </div>
@@ -18,20 +22,17 @@
 
 <script>
 import axios from 'axios';
+import Products from './Products';
 
 export default {
   name: "CreateShopcart",
 
-  props: {
-    products: {
-      type: Array,
-      required: true
-    }
-  },
+  components: { Products },
 
   data() {
     return {
       user_id: null,
+      addedProducts: {},
       error: ''
     }
   },
@@ -46,11 +47,13 @@ export default {
       }
 
       axios.post('/shopcarts', {
-        user_id: this.user_id
+        user_id: this.user_id,
+        products: this.addedProducts
       })
       .then(response => {
         this.$emit('created');
         this.user_id = null;
+        this.addedProducts = {};
       })
       .catch(error => {
         this.error = "Status Code: " + error.response.status + ". ";

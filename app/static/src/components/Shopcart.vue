@@ -12,7 +12,7 @@
               <small>{{ product.description }}</small>
             </div>
             <div class="col-sm">
-              <input class="form-control form-control-sm" v-model="product.quantity" />
+              <input type="number" class="form-control form-control-sm" v-model="product.quantity" @keydown.enter="update(product)" />
             </div>
           </div>
         </div>
@@ -23,6 +23,12 @@
       </div>
     </div>
 
+    <products
+      v-bind="$attrs"
+      v-model="addedProducts">
+      <button class="btn btn-primary" @click="updateCart">Update</button>
+    </products>
+
     <p>
       <button class="btn btn-link" @click="navigate">&laquo; Back</button>
     </p>
@@ -31,16 +37,14 @@
 
 <script>
 import axios from 'axios';
+import Products from './Products';
 
 export default {
   name: 'Shopcart',
 
-  props: {
-    products: {
-      type: Array,
-      required: true
-    },
+  components: { Products },
 
+  props: {
     userId: {
       type: Number,
       required: true
@@ -49,7 +53,8 @@ export default {
 
   data() {
     return {
-      cart: { products: {}}
+      cart: { products: {}},
+      addedProducts: {}
     }
   },
 
@@ -62,6 +67,23 @@ export default {
       axios.get(`/shopcarts/${this.userId}`)
         .then(response => {
           this.cart = response.data;
+        });
+    },
+
+    update(product) {
+      axios.put(`/shopcarts/${this.userId}/products/${product.id}`, {
+          quantity: parseInt(product.quantity)
+        })
+        .then(() => {
+          this.loadCart();
+        });
+    },
+
+    updateCart() {
+      axios.post(`/shopcarts/${this.userId}/products`, this.addedProducts)
+        .then(() => {
+          this.loadCart();
+          this.addedProducts = {};
         });
     },
 
