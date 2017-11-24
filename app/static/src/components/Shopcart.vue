@@ -3,16 +3,31 @@
     <div class="card mb-3">
       <div class="card-header">
         Shopcart for User: {{ cart.user_id }}
+        <button class="btn btn-sm btn-danger float-right" @click="deleteCart">Delete Cart</button>
       </div>
-      <div class="list-group list-group-flush" v-if="Object.keys(cart.products).length">
+      <div class="list-group list-group-flush" v-if="hasProducts">
         <div class="list-group-item" v-for="product in cart.products">
           <div class="row">
             <div class="col-sm">
               <h5 class="mb-1">{{ product.name }}</h5>
               <small>{{ product.description }}</small>
             </div>
+
             <div class="col-sm">
-              <input type="number" class="form-control form-control-sm" v-model="product.quantity" @keydown.enter="update(product)" />
+              <input type="number"
+                :id="`product-${product.id}-quantity`"
+                class="form-control form-control-sm"
+                v-model="product.quantity"
+                @keydown.enter="updateProduct(product)" />
+            </div>
+
+            <div class="col-sm-2">
+              <button
+                :id="`product-${product.id}-delete`"
+                class="btn btn-sm btn-outline-danger float-right"
+                @click="deleteProduct(product)">
+                  <span class="oi oi-trash"></span>
+              </button>
             </div>
           </div>
         </div>
@@ -58,6 +73,12 @@ export default {
     }
   },
 
+  computed: {
+    hasProducts() {
+      return Object.keys(this.cart.products).length;
+    }
+  },
+
   mounted() {
     this.loadCart();
   },
@@ -70,10 +91,17 @@ export default {
         });
     },
 
-    update(product) {
+    updateProduct(product) {
       axios.put(`/shopcarts/${this.userId}/products/${product.id}`, {
           quantity: parseInt(product.quantity)
         })
+        .then(() => {
+          this.loadCart();
+        });
+    },
+
+    deleteProduct(product) {
+      axios.delete(`/shopcarts/${this.userId}/products/${product.id}`)
         .then(() => {
           this.loadCart();
         });
@@ -84,6 +112,13 @@ export default {
         .then(() => {
           this.loadCart();
           this.addedProducts = {};
+        });
+    },
+
+    deleteCart() {
+      axios.delete(`/shopcarts/${this.userId}`)
+        .then(() => {
+          this.navigate();
         });
     },
 
