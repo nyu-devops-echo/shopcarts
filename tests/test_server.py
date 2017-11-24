@@ -34,9 +34,6 @@ class TestServer(unittest.TestCase):
     def test_index(self):
         """ Test the Home Page """
         resp = self.app.get('/')
-        data = json.loads(resp.data.decode('utf8'))
-        self.assertEqual(data['name'], 'Shopcarts REST API Service')
-        self.assertEqual(data['description'], 'This is the REST API Service for the shopcarts.')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
     def test_get_shopcart(self):
@@ -382,6 +379,15 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data.decode('utf8'))
         self.assertEqual(data, [])
+
+    def test_get_all_products(self):
+        """ Get a list of all products """
+        resp = self.app.get('/products')
+
+        data = json.loads(resp.data.decode('utf8'))
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), 5)
 
 if __name__ == '__main__':
     unittest.main()
