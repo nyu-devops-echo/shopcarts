@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "vue": "^2.4.4"
+    "vue": "^2.4.4",
+    "vue-simple-spinner": "^1.2.8"
   },
   "browserslist": [
     "> 1%",

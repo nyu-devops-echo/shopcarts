@@ -7,6 +7,7 @@
     <list-shopcarts
       v-bind="$attrs"
       :carts='carts'
+      :loading='loading'
       @filter='loadCarts'
       @pruned='loadCarts'
       v-on="$listeners" />
@@ -25,7 +26,8 @@ export default {
 
   data() {
     return {
-      carts: []
+      carts: [],
+      loading: false
     }
   },
 
@@ -35,11 +37,13 @@ export default {
 
   methods: {
     loadCarts(productId) {
+      this.loading = true;
       const pid = productId || null;
 
       axios.get('/shopcarts', { params: { pid } })
         .then(response => {
           this.carts = response.data;
+          this.loading = false;
         });
     }
   }

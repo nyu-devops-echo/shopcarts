@@ -5,6 +5,9 @@
         Shopcart for User: {{ cart.user_id }}
         <button class="btn btn-sm btn-danger float-right" @click="deleteCart">Delete Cart</button>
       </div>
+      
+      <spinner v-if="loading" />
+
       <div class="list-group list-group-flush" v-if="hasProducts">
         <div class="list-group-item" v-for="product in cart.products">
           <div class="row">
@@ -52,12 +55,13 @@
 
 <script>
 import axios from 'axios';
+import Spinner from './Spinner';
 import Products from './Products';
 
 export default {
   name: 'Shopcart',
 
-  components: { Products },
+  components: { Spinner, Products },
 
   props: {
     userId: {
@@ -68,6 +72,7 @@ export default {
 
   data() {
     return {
+      loading: false,
       cart: { products: {}},
       addedProducts: {}
     }
@@ -85,9 +90,12 @@ export default {
 
   methods: {
     loadCart() {
+      this.loading = true;
+
       axios.get(`/shopcarts/${this.userId}`)
         .then(response => {
           this.cart = response.data;
+          this.loading = false;
         });
     },
 

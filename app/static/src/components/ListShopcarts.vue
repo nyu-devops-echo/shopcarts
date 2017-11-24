@@ -3,6 +3,9 @@
     <div class="card-header">
       All Shopcarts
     </div>
+    
+    <spinner v-if="loading" />
+
     <div class="card-body">
       <div class="form-group row">
         <label for="filter" class="col-sm-4 col-form-label">Filter by product:</label>
@@ -45,9 +48,12 @@
 
 <script>
 import axios from 'axios';
+import Spinner from './Spinner';
 
 export default {
   name: "ListShopcarts",
+
+  components: { Spinner },
 
   props: {
     carts: {
@@ -58,6 +64,11 @@ export default {
     products: {
       type: Array,
       required: true
+    },
+
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
 
