@@ -3,6 +3,18 @@
     <div class="card-header">
       All Shopcarts
     </div>
+    <div class="card-body">
+      <div class="form-group row">
+        <label for="filter" class="col-sm-4 col-form-label">Filter by product:</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="filter" v-model='selected' @change="filter">
+            <option value="">All Products</option>
+            <option v-for="product in products" :value="product.id">{{ product.name }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <table class="table table-custom">
       <thead>
         <tr>
@@ -19,10 +31,16 @@
         </tr>
       </tbody>
     </table>
+    
+    <div class="card-body">
+      <button class="btn btn-danger" @click="prune">Prune</button>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: "Shopcarts",
 
@@ -30,6 +48,31 @@ export default {
     carts: {
       type: Array,
       required: true
+    },
+
+    products: {
+      type: Array,
+      required: true
+    }
+  },
+
+  data() {
+    return {
+      selected: ""
+    }
+  },
+
+  methods: {
+    filter() {
+      this.$emit('filter', this.selected);
+    },
+
+    prune() {
+      axios.delete('/shopcarts/prune')
+        .then(response => {
+          this.selected = "";
+          this.$emit('pruned');
+        });
     }
   }
 };
@@ -39,7 +82,7 @@ export default {
   .table.table-custom {
     margin-bottom: 0;
   }
-  
+
   .table.table-custom td,
   .table.table-custom tbody th {
     padding: 0 .75rem;

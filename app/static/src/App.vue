@@ -3,9 +3,15 @@
     <h1 class="text-center mt-3">Shopcart Service</h1>
     <hr />
 
-    <create-shopcart @created='loadData' />
+    <create-shopcart
+      :products='products'
+      @created='loadCarts' />
 
-    <shopcarts :carts='carts' />
+    <shopcarts
+      :carts='carts'
+      :products='products'
+      @filter='loadCarts'
+      @pruned='loadCarts' />
   </div>
 </template>
 
@@ -21,19 +27,30 @@ export default {
 
   data() {
     return {
-      carts: []
+      carts: [],
+      products: []
     }
   },
 
   mounted() {
-    this.loadData();
+    this.loadCarts();
+    this.loadProducts();
   },
 
   methods: {
-    loadData() {
-      axios.get('/shopcarts')
+    loadCarts(productId) {
+      const pid = productId || null;
+      
+      axios.get('/shopcarts', { params: { pid } })
         .then(response => {
           this.carts = response.data;
+        });
+    },
+
+    loadProducts() {
+      axios.get('/products')
+        .then(response => {
+          this.products = response.data;
         });
     }
   }
