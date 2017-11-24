@@ -3,56 +3,62 @@
     <h1 class="text-center mt-3">Shopcart Service</h1>
     <hr />
 
-    <create-shopcart
-      :products='products'
-      @created='loadCarts' />
-
-    <shopcarts
-      :carts='carts'
-      :products='products'
-      @filter='loadCarts'
-      @pruned='loadCarts' />
+    <transition name="component-fade" mode="out-in">
+      <component
+        :is="view"
+        :products='products'
+        :userId='userId'
+        @navigate='changeView' />
+    </transition>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import CreateShopcart from './components/CreateShopcart';
+import Shopcart from './components/Shopcart';
 import Shopcarts from './components/Shopcarts';
 
 export default {
   name: 'App',
 
-  components: { CreateShopcart, Shopcarts },
+  components: { Shopcart, Shopcarts },
 
   data() {
     return {
-      carts: [],
-      products: []
+      view: 'Shopcarts',
+      products: [],
+      userId: null
     }
   },
 
   mounted() {
-    this.loadCarts();
     this.loadProducts();
   },
 
   methods: {
-    loadCarts(productId) {
-      const pid = productId || null;
-      
-      axios.get('/shopcarts', { params: { pid } })
-        .then(response => {
-          this.carts = response.data;
-        });
-    },
-
     loadProducts() {
       axios.get('/products')
         .then(response => {
           this.products = response.data;
         });
+    },
+
+    changeView({ view, userId }) {
+      this.view = view;
+      this.userId = userId || null;
     }
   }
 }
 </script>
+
+<style>
+  .component-fade-enter-active,
+  .component-fade-leave-active {
+    transition: opacity .3s ease;
+  }
+
+  .component-fade-enter,
+  .component-fade-leave-to {
+    opacity: 0;
+  }
+</style>

@@ -110,7 +110,7 @@ class TestServer(unittest.TestCase):
         self.assertIsNotNone(location)
         data = json.loads(resp.data.decode('utf8'))
         self.assertIn('/shopcarts/3', location)
-        self.assertEqual(data['products'], {'5': 1})
+        self.assertDictContainsSubset({"quantity": 1}, data['products']['5'])
         self.assertEqual(len(server.Shopcart.all()), n_cart+1)
 
     def test_create_shopcart_prods(self):
@@ -129,8 +129,9 @@ class TestServer(unittest.TestCase):
 
         # Check the data is correct
         new_json = json.loads(resp.data.decode('utf8'))
-        self.assertEqual(new_json['products']['1'], 13)
-        self.assertEqual(new_json['products']['2'], 34)
+
+        self.assertDictContainsSubset({"quantity": 13}, new_json['products']['1'])
+        self.assertDictContainsSubset({"quantity": 34}, new_json['products']['2'])
         self.assertEqual(len(server.Shopcart.all()), n_cart+1)
 
     def test_create_shopcart_invalid_prods(self):
@@ -168,7 +169,8 @@ class TestServer(unittest.TestCase):
         cart.add_product(pid=3, quant=5)
 
         prods_in_cart = cart.serialize()['products']
-        self.assertEqual(prods_in_cart, {2: 3, 3: 5})
+        self.assertDictContainsSubset({"quantity": 3}, prods_in_cart[2])
+        self.assertDictContainsSubset({"quantity": 5}, prods_in_cart[3])
 
         data = json.dumps({'quantity': 2})
 
@@ -176,7 +178,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         new_json = json.loads(resp.data.decode('utf8'))
-        self.assertEqual(new_json['products']["3"], 2)
+        self.assertDictContainsSubset({"quantity": 2}, new_json['products']["3"])
 
     def test_update_product_without_quantity(self):
         """ Updating a product and not sending quantity """
@@ -211,7 +213,8 @@ class TestServer(unittest.TestCase):
         cart.add_product(pid=3, quant=5)
 
         prods_in_cart = cart.serialize()['products']
-        self.assertEqual(prods_in_cart, {2:3, 3:5})
+        self.assertDictContainsSubset({"quantity": 3}, prods_in_cart[2])
+        self.assertDictContainsSubset({"quantity": 5}, prods_in_cart[3])
 
         data = json.dumps({'quantity': 0})
 
@@ -284,7 +287,7 @@ class TestServer(unittest.TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data['products']), product_count + 1)
-        self.assertEqual(data['products']['1'], 2)
+        self.assertDictContainsSubset({"quantity": 2}, data['products']['1'])
 
     def test_add_multiple_new_products_to_cart(self):
         """ Add multiple new products to the cart """
@@ -296,8 +299,8 @@ class TestServer(unittest.TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data['products']), product_count + 2)
-        self.assertEqual(data['products']['1'], 2)
-        self.assertEqual(data['products']['2'], 4)
+        self.assertDictContainsSubset({"quantity": 2}, data['products']['1'])
+        self.assertDictContainsSubset({"quantity": 4}, data['products']['2'])
 
     def test_add_existing_product_to_cart(self):
         """ Add an existing product to the cart """
@@ -309,7 +312,7 @@ class TestServer(unittest.TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data['products']), product_count)
-        self.assertEqual(data['products']['1'], 9)
+        self.assertDictContainsSubset({"quantity": 9}, data['products']['1'])
 
     def test_add_multiple_existing_products_to_cart(self):
         """ Add multiple existing products to the cart """
@@ -321,8 +324,8 @@ class TestServer(unittest.TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data['products']), product_count)
-        self.assertEqual(data['products']['1'], 9)
-        self.assertEqual(data['products']['2'], 23)
+        self.assertDictContainsSubset({"quantity": 9}, data['products']['1'])
+        self.assertDictContainsSubset({"quantity": 23}, data['products']['2'])
 
     def test_add_products_in_bad_format_to_cart(self):
         """ Try to add malformed products to cart """

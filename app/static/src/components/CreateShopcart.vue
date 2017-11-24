@@ -22,6 +22,13 @@ import axios from 'axios';
 export default {
   name: "CreateShopcart",
 
+  props: {
+    products: {
+      type: Array,
+      required: true
+    }
+  },
+
   data() {
     return {
       user_id: null,
@@ -29,18 +36,7 @@ export default {
     }
   },
 
-  mounted() {
-    this.loadData();
-  },
-
   methods: {
-    loadData() {
-      axios.get('/products')
-        .then(response => {
-          this.products = response.data;
-        });
-    },
-
     submit() {
       this.error = '';
 
