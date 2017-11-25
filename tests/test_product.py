@@ -47,6 +47,23 @@ class TestProduct(unittest.TestCase):
         product = Product(name="Test")
 
         self.assertEqual(str(product), "<Name 'Test'>")
+    
+    def test_get_all_products(self):
+        """ Test All products Can Be Retrieved """
+        Product.seed_db()
+
+        products = Product.all()
+
+        self.assertEqual(len(products), 5)
+    
+    def test_serialize_a_product(self):
+        product = Product(id=1, name="Test", price=1.0, description="Test Description")
+        product = product.serialize()
+
+        self.assertEqual(product['id'], 1)
+        self.assertEqual(product['name'], "Test")
+        self.assertEqual(product['price'], 1.0)
+        self.assertEqual(product['description'], "Test Description")
 
 if __name__ == '__main__':
     unittest.main()

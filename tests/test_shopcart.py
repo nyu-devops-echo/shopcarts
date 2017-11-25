@@ -286,8 +286,11 @@ class TestShopcart(unittest.TestCase):
         cart = cart.serialize()
 
         self.assertEqual(cart['user_id'], 1)
-        self.assertEqual(cart['products'][1], 2)
-        self.assertEqual(cart['products'][2], 1)
+        self.assertEqual(cart['products'][1]["name"], "Apple")
+        self.assertEqual(cart['products'][1]["quantity"], 2)
+
+        self.assertEqual(cart['products'][2]["name"], "Pen")
+        self.assertEqual(cart['products'][2]["quantity"], 1)
 
 if __name__ == '__main__':
     unittest.main()

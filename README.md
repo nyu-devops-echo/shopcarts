@@ -57,3 +57,20 @@ This is a RESTful shopcarts service that allows users to create, delete, and mod
 
 #### DELETE /shopcarts/prune
   * Deletes all empty shopcarts
+
+## Build Shopcarts UI
+
+``` bash
+cd /vagrant
+
+# install dependencies
+npm install
+
+# watch changes and rebuild
+npm run watch
+
+# build for production with minification
+npm run build
+```
+
+Built using [Vue.js](https://vuejs.org)

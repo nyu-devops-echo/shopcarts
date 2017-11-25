@@ -49,9 +49,13 @@ Vagrant.configure("2") do |config|
      sudo mv $PHANTOM_JS /usr/local/share
      sudo ln -sf /usr/local/share/$PHANTOM_JS/bin/phantomjs /usr/local/bin
      rm -f $PHANTOM_JS.tar.bz2
+    # Install Nodejs and NPM 
+    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+    sudo apt-get install -y nodejs
     # Install app dependencies
     cd /vagrant
     sudo pip install -r requirements.txt
+    npm install
   SHELL
 
   ######################################################################
