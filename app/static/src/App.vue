@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="container">
-    <h1 class="text-center mt-3">Shopcart Service</h1>
+    <h1 class="text-center mt-3">Shopcarts REST API Service</h1>
     <hr />
 
     <transition name="component-fade" mode="out-in">
