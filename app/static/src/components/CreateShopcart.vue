@@ -4,7 +4,7 @@
       Create Shopcart
     </div>
     <div class="card-body">
-      <form @submit.prevent="submit">
+      <form @submit.prevent="submit" id="shopcart-create-form">
         <p id="form-error" class="form-text text-danger">{{ error }}</p>
         <div class="form-group">
           <input type="number" class="form-control" v-model="user_id" id="user_id" placeholder="Enter User Id" />
@@ -14,7 +14,7 @@
           v-bind="$attrs"
           v-model="addedProducts" />
 
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary" id="shopcart-create">Create</button>
       </form>
     </div>
   </div>

@@ -11,14 +11,18 @@
         <label for="filter" class="col-sm-4 col-form-label">Filter by product:</label>
         <div class="col-sm-8">
           <select class="form-control" id="filter" v-model='selected' @change="filter">
-            <option value="">All Products</option>
-            <option v-for="product in products" :value="product.id">{{ product.name }}</option>
+            <option value="" id="all-products-option">All Products</option>
+            <option v-for="product in products"
+              :value="product.id"
+              :id="`product-${product.id}-option`">
+                {{ product.name }}
+            </option>
           </select>
         </div>
       </div>
     </div>
 
-    <table class="table table-custom">
+    <table class="table table-custom" id="shopcarts-table-list">
       <thead>
         <tr>
           <th scope="col">User Id</th>
@@ -28,20 +32,20 @@
       </thead>
       <tbody>
         <template v-if='carts.length'>
-          <tr v-for="cart in carts">
+          <tr v-for="cart in carts" :id="`shopcart-${cart.user_id}-row`">
             <th scope="row">{{ cart.user_id }}</th scope="row">
             <td>{{ Object.keys(cart.products).length }}</td>
-            <td><button class="btn btn-link" @click="navigate(cart)">View</button></td>
+            <td><button class="btn btn-link" @click="navigate(cart)" :id="`view-shopcart-${cart.user_id}`">View</button></td>
           </tr>
         </template>
-        <tr v-else>
+        <tr v-else id="empty-shopcarts">
           <td colspan="3" style="padding: .375rem .75rem">No Shopcarts</td>
         </tr>
       </tbody>
     </table>
     
     <div class="card-body">
-      <button class="btn btn-danger" @click="prune">Prune</button>
+      <button class="btn btn-danger" @click="prune" id="prune-shopcarts">Prune</button>
     </div>
   </div>
 </template>

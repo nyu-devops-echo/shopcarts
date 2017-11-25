@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="card mb-3">
-      <div class="card-header">
+      <div class="card-header" id="shopcart-header">
         Shopcart for User: {{ cart.user_id }}
-        <button class="btn btn-sm btn-danger float-right" @click="deleteCart">Delete Cart</button>
+        <button class="btn btn-sm btn-danger float-right" @click="deleteCart" id="delete-shopcart">Delete Cart</button>
       </div>
       
       <spinner v-if="loading" />
 
-      <div class="list-group list-group-flush" v-if="hasProducts">
-        <div class="list-group-item" v-for="product in cart.products">
+      <div class="list-group list-group-flush" v-if="hasProducts" id="shopcart-products-list">
+        <div class="list-group-item" v-for="product in cart.products" :id="`shopcart-product-${product.id}`">
           <div class="row">
             <div class="col-sm">
               <h5 class="mb-1">{{ product.name }}</h5>
@@ -44,11 +44,11 @@
     <products
       v-bind="$attrs"
       v-model="addedProducts">
-      <button class="btn btn-primary" @click="updateCart">Update</button>
+      <button class="btn btn-primary" @click="updateCart" id="update-shopcart">Update</button>
     </products>
 
     <p>
-      <button class="btn btn-link" @click="navigate">&laquo; Back</button>
+      <button class="btn btn-link" @click="navigate" id="back">&laquo; Back</button>
     </p>
   </div>
 </template>

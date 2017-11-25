@@ -10,7 +10,7 @@
         <label :for="`product-${product.id}`" class="col-sm col-form-label col-form-label-sm">{{ product.name }}</label>
         <div class="col-sm">
           <select class="form-control form-control-sm"
-            :id="`product-${product.id}`"
+            :id="`product-${product.id}-select`"
             v-model="value[product.id]"
             @change="updateProducts">
             <option>1</option>
