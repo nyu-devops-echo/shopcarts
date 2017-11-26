@@ -3,7 +3,7 @@
     <div class="card mb-3">
       <div class="card-header" id="shopcart-header">
         Shopcart for User: {{ cart.user_id }}
-        <button class="btn btn-sm btn-danger float-right" @click="deleteCart" id="delete-shopcart">Delete Cart</button>
+        <button class="btn btn-sm btn-danger float-right" @click="deleteCart" id="delete-btn">Delete Cart</button>
       </div>
       
       <spinner v-if="loading" />
@@ -44,11 +44,11 @@
     <products
       v-bind="$attrs"
       v-model="addedProducts">
-      <button class="btn btn-primary" @click="updateCart" id="update-shopcart">Update</button>
+      <button class="btn btn-primary" @click="updateCart" id="update-btn">Update</button>
     </products>
 
     <p>
-      <button class="btn btn-link" @click="navigate" id="back">&laquo; Back</button>
+      <button class="btn btn-link" @click="navigate" id="back-btn">&laquo; Back</button>
     </p>
   </div>
 </template>

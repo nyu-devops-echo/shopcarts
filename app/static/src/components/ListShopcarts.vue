@@ -45,7 +45,7 @@
     </table>
     
     <div class="card-body">
-      <button class="btn btn-danger" @click="prune" id="prune-shopcarts">Prune</button>
+      <button class="btn btn-danger" @click="prune" id="prune-btn">Prune</button>
     </div>
   </div>
 </template>

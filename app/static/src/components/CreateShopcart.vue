@@ -14,7 +14,7 @@
           v-bind="$attrs"
           v-model="addedProducts" />
 
-        <button type="submit" class="btn btn-primary" id="shopcart-create">Create</button>
+        <button type="submit" class="btn btn-primary" id="create-btn">Create</button>
       </form>
     </div>
   </div>
