@@ -23,3 +23,22 @@ def step_impl(context, message):
 @then(u'I should not see "{message}"')
 def step_impl(context, message):
         assert message not in context.driver.find_element_by_tag_name('body').text
+
+# CREATE A SHOPCART
+@when(u'I set the "{user_id}" to "{value}"')
+def step_impl(context, user_id, value):
+    element = context.driver.find_element_by_id(user_id)
+    element.clear()
+    element.send_keys(value)
+
+@when(u'I click the "{create}" button')
+def step_impl(context, create):
+    button_id = 'shopcart-' + create.lower()
+    context.driver.find_element_by_id(button_id).click()
+
+# FIXME
+@then(u'I should see cart with id "{id}" in the All Shopcarts table')
+def step_impl(context, id):
+    table = context.driver.find_element_by_id('shopcarts-table-list')
+    print (table.text)
+    assert id in table.text
