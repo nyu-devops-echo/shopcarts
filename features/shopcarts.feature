@@ -5,5 +5,14 @@ Feature: The shopcarts service back-end
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Shopcarts REST API Service" in the name
+    Then I should see "Shopcarts REST API Service"
     And I should not see "404 Not Found"
+
+Scenario: Delete a Shopcart
+    Given the following shopcarts
+        | user_id |
+        | 1     |
+    When I visit the "Home Page"
+    And I visit Shopcart "1"
+    And I press the "Delete" button
+    Then I should not see Shopcart "1" in the results
