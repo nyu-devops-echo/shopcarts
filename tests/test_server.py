@@ -357,6 +357,13 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(server.Shopcart.all()), 1)
 
+    def test_remove_all_shopcarts(self):
+        """ Remove all shopcarts """
+        resp = self.app.delete('/shopcarts/reset')
+
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(server.Shopcart.all()), 0)
+
     def test_query_product(self):
         """ Query for shopcarts by product id """
         cart = server.Shopcart.find(1)
