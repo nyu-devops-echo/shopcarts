@@ -20,6 +20,36 @@ def step_impl(context, message):
 def step_impl(context, message):
     assert message not in context.driver.find_element_by_id('app-js').text
 
+# CREATE SHOPCART
+@when(u'I set the Shopcart "{user_id}" to "{value}"')
+def step_impl(context, user_id, value):
+    element = context.driver.find_element_by_id(user_id)
+    element.clear()
+    element.send_keys(value)
+
+@when(u'I click the "Add Products" button')
+def step_impl(context):
+    context.driver.find_element_by_id('toggle-products').click()
+
+@when(u'I add "{value}" "{product}" to the cart')
+def step_impl(context, value, product):
+    select_element = context.driver.find_element_by_id('product-1-select')
+    for option in select_element.find_elements_by_tag_name('option'):
+        if option.text == product:
+            option.click()
+            break
+
+@when(u'I click the "{create}" button')
+def step_impl(context, create):
+    button_id = create.lower() + '-btn'
+    context.driver.find_element_by_id(button_id).click()
+
+@then(u'I should see Shopcart "{id}" in the results')
+def step_impl(context, id):
+    element_id = 'shopcart-' + id + '-row'
+    assert context.driver.find_element_by_id(element_id)
+
+# DELETE SHOPCART
 @given(u'the following shopcarts')
 def step_impl(context):
     """ Delete all Shopcarts and load new ones """

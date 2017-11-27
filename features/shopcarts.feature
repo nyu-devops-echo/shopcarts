@@ -8,6 +8,14 @@ Scenario: The server is running
     Then I should see "Shopcarts REST API Service"
     And I should not see "404 Not Found"
 
+Scenario: Create a Shopcart
+    When I visit the "Home Page"
+    And I set the Shopcart "user_id" to "1"
+    And I click the "Add Products" button
+    And I add "1" "Apple" to the cart
+    And I click the "Create" button
+    Then I should see Shopcart "1" in the results
+
 Scenario: Delete a Shopcart
     Given the following shopcarts
         | user_id |
