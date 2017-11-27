@@ -180,6 +180,15 @@ def get_products():
     return jsonify(message), status.HTTP_200_OK
 
 ######################################################################
+# DELETE ALL SHOPCART DATA (for testing only)
+######################################################################
+@app.route('/shopcarts/reset', methods=['DELETE'])
+def shopcarts_reset():
+    """ Removes all shopcarts from the database """
+    Shopcart.remove_all()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 def check_content_type(content_type):

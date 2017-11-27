@@ -110,6 +110,7 @@ class Shopcart(db.Model):
         """ Remove all Shopcarts from database """
         ProductShopcart.query.delete()
         Shopcart.query.delete()
+        db.session.commit()
 
     @staticmethod
     def find(user_id):

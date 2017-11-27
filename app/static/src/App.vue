@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container">
+  <div id="app-js" class="container">
     <h1 class="text-center mt-3">Shopcarts REST API Service</h1>
     <hr />
 
