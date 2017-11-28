@@ -9,9 +9,15 @@ Scenario: The server is running
     And I should not see "404 Not Found"
 
 Scenario: List all shopcarts
-    When I visit "/shopcarts"
-    Then I should see "[]"
-    And I should not see "404 Not Found"
+    Given the following shopcarts
+        | user_id   |
+        | 1         |
+        | 2         |
+        | 5         |
+    When I visit the "Home Page"
+    Then I should see "1" in the shopcarts table
+    And I should see "2" in the shopcarts table
+    And I should see "5" in the shopcarts table
 
 Scenario: Create a Shopcart
     When I visit the "Home Page"
