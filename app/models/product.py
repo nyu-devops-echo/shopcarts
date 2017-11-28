@@ -11,6 +11,20 @@ class Product(db.Model):
 
     def __repr__(self):
         return '<Name %r>' % self.name
+    
+    def serialize(self):
+        """ Serializes a product into a dictionary """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "description": self.description
+        }
+
+    @staticmethod
+    def all():
+        """ Get all Products """
+        return Product.query.all()
 
     @staticmethod
     def seed_db():

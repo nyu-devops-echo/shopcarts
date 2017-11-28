@@ -93,7 +93,11 @@ class Shopcart(db.Model):
         """ Serializes a shopcart into a dictionary """
         return {
             "user_id": self.user_id,
-            "products": {product.product.id: product.quantity for product in self.products}
+            "products": {
+                product.product.id: {
+                    **product.product.serialize(),
+                    "quantity": product.quantity
+                } for product in self.products}
         }
 
     @staticmethod
@@ -106,6 +110,7 @@ class Shopcart(db.Model):
         """ Remove all Shopcarts from database """
         ProductShopcart.query.delete()
         Shopcart.query.delete()
+        db.session.commit()
 
     @staticmethod
     def find(user_id):

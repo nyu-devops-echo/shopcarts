@@ -6,6 +6,10 @@ Thumbs.db
 # Vagrant
 .vagrant
 
+# JS/NPM
+node_modules/
+npm-debug.log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -19,7 +23,6 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/

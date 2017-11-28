@@ -12,9 +12,7 @@ from . import app
 @app.route('/')
 def index():
     """ Root URL response """
-    return jsonify(name='Shopcarts REST API Service',
-                   version='1.0',
-                   description= 'This is the REST API Service for the shopcarts.'), status.HTTP_200_OK
+    return app.send_static_file('index.html')
 
 ######################################################################
 # RETRIEVE A SHOPCART
@@ -172,11 +170,30 @@ def prune_empty_shopcarts():
     return make_response('', status.HTTP_204_NO_CONTENT)
 
 ######################################################################
+# Get all available Products
+######################################################################
+@app.route('/products', methods=['GET'])
+def get_products():
+    products = Product.all()
+    message = [product.serialize() for product in products]
+
+    return jsonify(message), status.HTTP_200_OK
+
+######################################################################
+# DELETE ALL SHOPCART DATA (for testing only)
+######################################################################
+@app.route('/shopcarts/reset', methods=['DELETE'])
+def shopcarts_reset():
+    """ Removes all shopcarts from the database """
+    Shopcart.remove_all()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 def check_content_type(content_type):
     """ Checks that the media type is correct """
-    if request.headers['Content-Type'] == content_type:
+    if content_type in request.headers['Content-Type']:
         return
     #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
