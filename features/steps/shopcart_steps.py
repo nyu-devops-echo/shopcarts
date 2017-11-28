@@ -1,8 +1,9 @@
 """
-Pet Steps
-Steps file for Pet.feature
+Shopcart Steps
+Steps file for shopcarts.feature
 """
 
+from os import getenv
 import json
 import requests
 from behave import *
@@ -15,6 +16,11 @@ def step_impl(context):
 @then(u'I should see "{message}"')
 def step_impl(context, message):
     assert message in context.driver.find_element_by_id('app-js').text
+
+@then(u'I should see "{user_id}" in the results')
+def step_impl(context, user_id):
+    row = 'shopcart-' + user_id + '-row'
+    assert user_id in context.driver.find_element_by_id( row).text
 
 @then(u'I should not see "{message}"')
 def step_impl(context, message):
@@ -48,6 +54,10 @@ def step_impl(context, create):
 def step_impl(context, id):
     element_id = 'shopcart-' + id + '-row'
     assert context.driver.find_element_by_id(element_id)
+
+@then(u'I should not see "{error}" in the form')
+def step_impl(context, error):
+    assert not context.driver.find_element_by_id('form-error').text == error
 
 # DELETE SHOPCART
 @given(u'the following shopcarts')
