@@ -37,11 +37,11 @@ def step_impl(context, user_id, value):
 def step_impl(context):
     context.driver.find_element_by_id('toggle-products').click()
 
-@when(u'I add "{value}" of Product "{product_id}" to the cart')
-def step_impl(context, value, product_id):
+@when(u'I add "{quantity}" of Product "{product_id}" to the cart')
+def step_impl(context, quantity, product_id):
     select_element = context.driver.find_element_by_id('product-' + product_id + '-select')
     for option in select_element.find_elements_by_tag_name('option'):
-        if option.get_attribute('value') == value:
+        if option.get_attribute('value') == quantity:
             option.click()
             break
 
@@ -80,6 +80,11 @@ def step_impl(context):
 def step_impl(context, user_id):
     button_id = 'view-shopcart-' + user_id
     context.driver.find_element_by_id(button_id).click()
+
+@when(u'I type Shopcart "{user_id}"')
+def step_impl(context, user_id):
+    user_input = context.driver.find_element_by_id('user_id')
+    user_input.send_keys(user_id)
 
 @when(u'I delete product "{product_id}" from the cart')
 def step_impl(context, product_id):

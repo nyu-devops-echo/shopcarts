@@ -47,11 +47,10 @@ Scenario: Delete a Product from a Shopcart
     Then I should see "No products in this shopcart" on the cart page
 
 Scenario: Add a Product to a Shopcart
-       # | user_id | product_id | quantity |
-       # | 1       | 2          | 5        |
    When I visit the "Home Page"
-   And I visit Shopcart "1"
+   And I type Shopcart "2"
    And I click the "Add Products" button
    And I add "2" of Product "3" to the cart
-   And I click the "Update" button
+   And I click the "create" button
+   And I visit Shopcart "2"
    Then I should see "2" of Product "3" in the products list
