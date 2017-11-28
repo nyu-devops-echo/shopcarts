@@ -55,6 +55,10 @@ def step_impl(context, id):
     element_id = 'shopcart-' + id + '-row'
     assert context.driver.find_element_by_id(element_id)
 
+@then(u'I should not see "{error}" in the form')
+def step_impl(context, error):
+    assert not context.driver.find_element_by_id('form-error').text == error
+
 # DELETE SHOPCART
 @given(u'the following shopcarts')
 def step_impl(context):

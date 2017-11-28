@@ -11,13 +11,13 @@ Scenario: The server is running
 Scenario: List all shopcarts
     Given the following shopcarts
         | user_id   |
-        | 1         |
         | 2         |
-        | 5         |
+        | 3         |
+        | 4         |
     When I visit the "Home Page"
-    Then I should see "1" in the results
-    And I should see "2" in the results
-    And I should see "5" in the results
+    Then I should see "2" in the results
+    And I should see "3" in the results
+    And I should see "4" in the results
 
 Scenario: Create a Shopcart
     When I visit the "Home Page"
@@ -26,6 +26,7 @@ Scenario: Create a Shopcart
     And I add "1" "Apple" to the cart
     And I click the "Create" button
     Then I should see Shopcart "1" in the results
+    And I should not see "Status Code: 409. Shopcart for user 1 already exits" in the form
 
 Scenario: Delete a Shopcart
     Given the following shopcarts
