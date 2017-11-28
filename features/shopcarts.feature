@@ -34,5 +34,14 @@ Scenario: Delete a Shopcart
         | 1     |
     When I visit the "Home Page"
     And I visit Shopcart "1"
-    And I press the "Delete" button
+    And I click the "Delete" button
     Then I should not see Shopcart "1" in the results
+
+Scenario: Delete a Product from a Shopcart
+    Given the following shopcarts
+        | user_id | product_id | quantity |
+        | 1       | 2          | 5        |
+    When I visit the "Home Page"
+    And I visit Shopcart "1"
+    And I delete product "2" from the cart
+    Then I should see "No products in this shopcart"

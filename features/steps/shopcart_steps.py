@@ -45,9 +45,9 @@ def step_impl(context, value, product):
             option.click()
             break
 
-@when(u'I click the "{create}" button')
-def step_impl(context, create):
-    button_id = create.lower() + '-btn'
+@when(u'I click the "{button}" button')
+def step_impl(context, button):
+    button_id = button.lower() + '-btn'
     context.driver.find_element_by_id(button_id).click()
 
 @then(u'I should see Shopcart "{id}" in the results')
@@ -69,6 +69,9 @@ def step_impl(context):
     create_url = context.base_url + '/shopcarts'
     for row in context.table:
         data = {"user_id": row['user_id']}
+        if 'product_id' in context.table.headings:
+            data['products'] = {int(row['product_id']): int(row['quantity'])}
+
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
         assert context.resp.status_code == 201
@@ -78,9 +81,9 @@ def step_impl(context, user_id):
     button_id = 'view-shopcart-' + user_id
     context.driver.find_element_by_id(button_id).click()
 
-@when(u'I press the "{button}" button')
-def step_impl(context, button):
-    button_id = button.lower() + '-btn'
+@when(u'I delete product "{product_id}" from the cart')
+def step_impl(context, product_id):
+    button_id = 'product-' + product_id + "-delete"
     context.driver.find_element_by_id(button_id).click()
 
 @then(u'I should not see Shopcart "{user_id}" in the results')
