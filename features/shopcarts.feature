@@ -23,7 +23,7 @@ Scenario: Create a Shopcart
     When I visit the "Home Page"
     And I set the Shopcart "user_id" to "1"
     And I click the "Add Products" button
-    And I add "1" "Apple" to the cart
+    And I add "1" of Product "1" to the cart
     And I click the "Create" button
     Then I should see Shopcart "1" in the results
     And I should not see "Status Code: 409. Shopcart for user 1 already exits" in the form
@@ -44,4 +44,14 @@ Scenario: Delete a Product from a Shopcart
     When I visit the "Home Page"
     And I visit Shopcart "1"
     And I delete product "2" from the cart
-    Then I should see "No products in this shopcart"
+    Then I should see "No products in this shopcart" on the cart page
+
+Scenario: Add a Product to a Shopcart
+       # | user_id | product_id | quantity |
+       # | 1       | 2          | 5        |
+   When I visit the "Home Page"
+   And I visit Shopcart "1"
+   And I click the "Add Products" button
+   And I add "2" of Product "3" to the cart
+   And I click the "Update" button
+   Then I should see "2" of Product "3" in the products list

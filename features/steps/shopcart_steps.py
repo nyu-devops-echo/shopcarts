@@ -7,7 +7,7 @@ from os import getenv
 import json
 import requests
 from behave import *
-
+import time
 @when(u'I visit the "Home Page"')
 def step_impl(context):
     """ Make a call to the base URL """
@@ -37,11 +37,11 @@ def step_impl(context, user_id, value):
 def step_impl(context):
     context.driver.find_element_by_id('toggle-products').click()
 
-@when(u'I add "{value}" "{product}" to the cart')
-def step_impl(context, value, product):
-    select_element = context.driver.find_element_by_id('product-1-select')
+@when(u'I add "{value}" of Product "{product_id}" to the cart')
+def step_impl(context, value, product_id):
+    select_element = context.driver.find_element_by_id('product-' + product_id + '-select')
     for option in select_element.find_elements_by_tag_name('option'):
-        if option.text == product:
+        if option.get_attribute('value') == value:
             option.click()
             break
 
@@ -90,3 +90,15 @@ def step_impl(context, product_id):
 def step_impl(context, user_id):
     element = context.driver.find_element_by_id('shopcarts-table-list')
     assert not element.find_elements_by_id('shopcart-' + user_id + '-row')
+
+@then(u'I should see "{message}" on the cart page')
+def step_impl(context, message):
+    parent = context.driver.find_element_by_class_name('mb-3')
+    child = parent.find_element_by_class_name('card-body')
+    assert message in child.text
+
+@then(u'I should see "{value}" of Product "{product_id}" in the products list')
+def step_impl(context, value, product_id):
+    assert context.driver.find_element_by_id('shopcart-product-' + product_id)
+    element_value = context.driver.find_element_by_id('product-' + product_id + '-quantity').get_attribute('value')
+    assert value == element_value
