@@ -15,9 +15,9 @@ Scenario: List all shopcarts
         | 2         |
         | 5         |
     When I visit the "Home Page"
-    Then I should see "1" in the shopcarts table
-    And I should see "2" in the shopcarts table
-    And I should see "5" in the shopcarts table
+    Then I should see "1" in the results
+    And I should see "2" in the results
+    And I should see "5" in the results
 
 Scenario: Create a Shopcart
     When I visit the "Home Page"
@@ -35,4 +35,3 @@ Scenario: Delete a Shopcart
     And I visit Shopcart "1"
     And I press the "Delete" button
     Then I should not see Shopcart "1" in the results
-

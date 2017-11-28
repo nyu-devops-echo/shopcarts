@@ -17,7 +17,7 @@ def step_impl(context):
 def step_impl(context, message):
     assert message in context.driver.find_element_by_id('app-js').text
 
-@then(u'I should see "{user_id}" in the shopcarts table')
+@then(u'I should see "{user_id}" in the results')
 def step_impl(context, user_id):
     row = 'shopcart-' + user_id + '-row'
     assert user_id in context.driver.find_element_by_id( row).text
