@@ -59,8 +59,8 @@ Scenario: Add a Product to an existing Shopcart
     And I visit Shopcart "1"
     And I click the "Add-Products" button
     And I add "2" of Product "3" to the cart
-    #And I click the "Update" button
-    #Then I should see "2" of Product "3" in the products list
+    And I click the "Update" button
+    Then I should see "2" of Product "3" in the products list
     Then I should not see "404 Not Found"
 
 

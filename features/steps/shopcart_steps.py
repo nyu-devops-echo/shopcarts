@@ -8,6 +8,9 @@ import json
 import requests
 from behave import *
 import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 @when(u'I visit the "Home Page"')
 def step_impl(context):
@@ -76,6 +79,8 @@ def step_impl(context, user_id):
     btn = context.driver.find_element_by_id(button_id)
     assert btn
     btn.click()
+    wait = WebDriverWait(context.driver, 10)
+    wait.until(EC.visibility_of_element_located((By.ID, 'shopcart-header')))
 
 @then(u'I should see "{message}" in the header')
 def step_impl(context, message):
