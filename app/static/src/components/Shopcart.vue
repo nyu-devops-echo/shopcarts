@@ -44,8 +44,8 @@
     <products
       v-bind="$attrs"
       v-model="addedProducts">
-    </products>
     <button class="btn btn-primary" @click="updateCart" id="update-btn">Update</button>
+    </products>
 
     <p>
       <button  class="btn btn-link" @click="navigate" id="back-btn">&laquo; Back</button>
