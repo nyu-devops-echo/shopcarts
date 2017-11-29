@@ -96,12 +96,12 @@ def step_impl(context, message):
 
 @when(u'I add "{quantity}" of Product "{product_id}" to the cart')
 def step_impl(context, quantity, product_id):
-    element = context.driver.find_element_by_id('product-' + product_id + '-quantity' )
+    element = context.driver.find_element_by_id('product-' + product_id + '-select' )
     element.clear()
     element.send_keys(int(quantity))
 
 @then(u'I should see "{quantity}" of Product "{product_id}" in the products list')
 def step_impl(context, quantity, product_id):
     assert context.driver.find_element_by_id('shopcart-product-' + product_id)
-    element_value = context.driver.find_element_by_id('product-' + product_id + '-quantity').get_attribute('value')
+    element_value = context.driver.find_element_by_id('product-' + product_id + '-quantity').text
     assert quantity == element_value
