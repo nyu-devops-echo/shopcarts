@@ -55,3 +55,12 @@ Scenario: Add a Product to an existing Shopcart
     And I add "2" of Product "3" to the cart
     And I click the "Update" button
     Then I should see "2" of Product "3" in the products list
+
+Scenario: Get an existing Shopcart
+    Given the following shopcarts
+        | user_id | product_id | quantity |
+        | 1       | 2          | 5        |
+    When I visit the "Home Page"
+    And I visit Shopcart "1"
+    Then I should see "1" in the header
+    And I should see "5" of Product "2" in the products list
