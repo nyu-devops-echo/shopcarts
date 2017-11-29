@@ -28,12 +28,6 @@ Scenario: Create a Shopcart
     Then I should see Shopcart "1" in the results
     And I should not see "Status Code: 409. Shopcart for user 1 already exits" in the form
 
-Scenario: Visit an existing Shopcart
-    When I visit the "Home Page"
-    And I visit Shopcart "1"
-    Then I should see "1" in the header
-    And I should not see "404 Not Found"
-
 @slow
 Scenario: Delete a Shopcart
     Given the following shopcarts
