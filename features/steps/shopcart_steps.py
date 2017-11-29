@@ -8,6 +8,7 @@ import json
 import requests
 from behave import *
 import time
+
 @when(u'I visit the "Home Page"')
 def step_impl(context):
     """ Make a call to the base URL """
@@ -33,17 +34,10 @@ def step_impl(context, user_id, value):
     element.clear()
     element.send_keys(value)
 
-@when(u'I click the "Add Products" button')
-def step_impl(context):
-    context.driver.find_element_by_id('toggle-products').click()
+# @when(u'I click the "Add-Products" button')
+# def step_impl(context):
+#     context.driver.find_element_by_id('toggle-products').click()
 
-@when(u'I add "{quantity}" of Product "{product_id}" to the cart')
-def step_impl(context, quantity, product_id):
-    select_element = context.driver.find_element_by_id('product-' + product_id + '-select')
-    for option in select_element.find_elements_by_tag_name('option'):
-        if option.get_attribute('value') == quantity:
-            option.click()
-            break
 
 @when(u'I click the "{button}" button')
 def step_impl(context, button):
@@ -79,12 +73,13 @@ def step_impl(context):
 @when(u'I visit Shopcart "{user_id}"')
 def step_impl(context, user_id):
     button_id = 'view-shopcart-' + user_id
-    context.driver.find_element_by_id(button_id).click()
+    btn = context.driver.find_element_by_id(button_id)
+    assert btn
+    btn.click()
 
-@when(u'I type Shopcart "{user_id}"')
-def step_impl(context, user_id):
-    user_input = context.driver.find_element_by_id('user_id')
-    user_input.send_keys(user_id)
+@then(u'I should see "{message}" in the header')
+def step_impl(context, message):
+    assert message in context.driver.find_element_by_id('shopcart-header').text
 
 @when(u'I delete product "{product_id}" from the cart')
 def step_impl(context, product_id):
@@ -102,8 +97,17 @@ def step_impl(context, message):
     child = parent.find_element_by_class_name('card-body')
     assert message in child.text
 
-@then(u'I should see "{value}" of Product "{product_id}" in the products list')
-def step_impl(context, value, product_id):
+@when(u'I add "{quantity}" of Product "{product_id}" to the cart')
+def step_impl(context, quantity, product_id):
+    assert context.driver.find_element_by_id('product-' + product_id + '-quantity' )
+    element = context.driver.find_element_by_id('product-' + product_id + '-quantity' )
+    element.clear()
+    element.send_keys(int(quantity))
+        
+@then(u'I should see "{quantity}" of Product "{product_id}" in the products list')
+def step_impl(context, quantity, product_id):
     assert context.driver.find_element_by_id('shopcart-product-' + product_id)
     element_value = context.driver.find_element_by_id('product-' + product_id + '-quantity').get_attribute('value')
-    assert value == element_value
+    assert quantity == element_value
+
+
