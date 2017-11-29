@@ -43,7 +43,7 @@ Scenario: Delete a Shopcart
     And I visit Shopcart "1"
     And I click the "Delete" button
     Then I should not see Shopcart "1" in the results
- 
+
 @slow
 Scenario: Delete a Product from a Shopcart
     Given the following shopcarts
@@ -61,7 +61,3 @@ Scenario: Add a Product to an existing Shopcart
     And I add "2" of Product "3" to the cart
     And I click the "Update" button
     Then I should see "2" of Product "3" in the products list
-    Then I should not see "404 Not Found"
-
-
-
