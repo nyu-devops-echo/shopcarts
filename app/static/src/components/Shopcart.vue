@@ -5,7 +5,7 @@
         Shopcart for User: {{ cart.user_id }}
         <button class="btn btn-sm btn-danger float-right" @click="deleteCart" id="delete-btn">Delete Cart</button>
       </div>
-      
+
       <spinner v-if="loading" />
 
       <div class="list-group list-group-flush" v-if="hasProducts" id="shopcart-products-list">
@@ -44,11 +44,11 @@
     <products
       v-bind="$attrs"
       v-model="addedProducts">
-      <button class="btn btn-primary" @click="updateCart" id="update-btn">Update</button>
+    <button class="btn btn-primary" @click="updateCart" id="update-btn">Update</button>
     </products>
 
     <p>
-      <button class="btn btn-link" @click="navigate" id="back-btn">&laquo; Back</button>
+      <button  class="btn btn-link" @click="navigate" id="back-btn">&laquo; Back</button>
     </p>
   </div>
 </template>
@@ -131,7 +131,7 @@ export default {
     },
 
     navigate() {
-      this.$emit('navigate', { 
+      this.$emit('navigate', {
         view: 'Shopcarts'
       });
     },
