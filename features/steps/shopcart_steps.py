@@ -126,4 +126,3 @@ def step_impl(context, product_id, quantity):
     element.clear()
     element.send_keys(int(quantity))
     element.send_keys(Keys.ENTER)
-    print(element.get_attribute('value'))

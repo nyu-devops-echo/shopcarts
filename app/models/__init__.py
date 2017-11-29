@@ -18,8 +18,6 @@ def init_db(app, migrate_db=True):
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-    app.config['SQLALCHEMY_POOL_RECYCLE'] = 3600
-    app.config['SQLALCHEMY_POOL_TIMEOUT'] = 3600
     db.init_app(app)
 
     if not migrate_db:
