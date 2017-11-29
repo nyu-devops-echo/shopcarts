@@ -56,11 +56,25 @@ Scenario: Add a Product to an existing Shopcart
     And I click the "Update" button
     Then I should see "2" of Product "3" in the products list
 
+Scenario: Prune Shopcarts
+    Given the following shopcarts
+        | user_id |
+        | 1     |
+        | 2     |
+        | 3     |
+    When I visit the "Home Page"
+    And I have "3" Shopcarts in the results
+    And I click the "Prune" button
+    Then I should have "0" Shopcarts in the results
+    And I should see "No Shopcarts"
+
+
 Scenario: Get an existing Shopcart
     Given the following shopcarts
         | user_id | product_id | quantity |
-        | 1       | 2          | 5        |
+        | 2       | 3          | 5        |
     When I visit the "Home Page"
-    And I visit Shopcart "1"
-    Then I should see "1" in the header
-    And I should see "5" of Product "2" in the products list
+    Then I should see Shopcart "2" in the results
+    When I visit Shopcart "2"
+    Then I should see "2" in the header
+    And I should see "5" of Product "3" in the products list
