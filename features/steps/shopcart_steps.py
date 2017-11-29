@@ -90,3 +90,17 @@ def step_impl(context, product_id):
 def step_impl(context, user_id):
     element = context.driver.find_element_by_id('shopcarts-table-list')
     assert not element.find_elements_by_id('shopcart-' + user_id + '-row')
+
+@when(u'I have "{quantity}" Shopcarts in the results')
+def step_impl(context, quantity):
+    element = context.driver.find_element_by_id('shopcarts-table-list')
+    assert len(element.find_elements_by_css_selector('tbody > tr')) == int(quantity)
+
+@then(u'I should have "{quantity}" Shopcarts in the results')
+def step_impl(context, quantity):
+    element = context.driver.find_element_by_id('shopcarts-table-list')
+
+    if int(quantity) > 0:
+        assert len(element.find_elements_by_css_selector('tbody > tr')) == int(quantity)
+    else:
+        assert element.find_elements_by_id('empty-shopcarts')

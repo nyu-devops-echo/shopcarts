@@ -45,3 +45,15 @@ Scenario: Delete a Product from a Shopcart
     And I visit Shopcart "1"
     And I delete product "2" from the cart
     Then I should see "No products in this shopcart"
+
+Scenario: Prune Shopcarts
+    Given the following shopcarts
+        | user_id |
+        | 1     |
+        | 2     |
+        | 3     |
+    When I visit the "Home Page"
+    And I have "3" Shopcarts in the results
+    And I click the "Prune" button
+    Then I should have "0" Shopcarts in the results
+    And I should see "No Shopcarts"
