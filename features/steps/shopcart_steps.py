@@ -119,3 +119,13 @@ def step_impl(context, quantity):
         assert len(element.find_elements_by_css_selector('tbody > tr')) == int(quantity)
     else:
         assert element.find_elements_by_id('empty-shopcarts')
+
+@when(u'I filter by product "{product_name}"')
+def step_impl(context, product_name):
+    select_element = context.driver.find_element_by_id('filter')
+    for option in select_element.find_elements_by_tag_name('option'):
+        if option.text == product_name:
+            option.click()
+            break
+    
+
