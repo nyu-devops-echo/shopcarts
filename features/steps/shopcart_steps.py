@@ -10,6 +10,7 @@ from behave import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 
 @when(u'I visit the "Home Page"')
 def step_impl(context):
@@ -102,8 +103,7 @@ def step_impl(context, quantity, product_id):
 
 @then(u'I should see "{quantity}" of Product "{product_id}" in the products list')
 def step_impl(context, quantity, product_id):
-    assert context.driver.find_element_by_id('shopcart-product-' + product_id)
-    element_value = context.driver.find_element_by_id('product-' + product_id + '-quantity').get_attribute('value')
+    element_value = context.driver.find_element_by_id('shopcart-product-' + product_id + '-quantity').get_attribute('value')
     assert quantity == element_value
 
 @when(u'I have "{quantity}" Shopcarts in the results')
@@ -119,3 +119,10 @@ def step_impl(context, quantity):
         assert len(element.find_elements_by_css_selector('tbody > tr')) == int(quantity)
     else:
         assert element.find_elements_by_id('empty-shopcarts')
+
+@when(u'I update product "{product_id}" to quantity "{quantity}"')
+def step_impl(context, product_id, quantity):
+    element = context.driver.find_element_by_id('shopcart-product-' + product_id + '-quantity')
+    element.clear()
+    element.send_keys(int(quantity))
+    element.send_keys(Keys.ENTER)

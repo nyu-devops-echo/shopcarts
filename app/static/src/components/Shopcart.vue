@@ -18,7 +18,7 @@
 
             <div class="col-sm">
               <input type="number"
-                :id="`product-${product.id}-quantity`"
+                :id="`shopcart-product-${product.id}-quantity`"
                 class="form-control form-control-sm"
                 v-model="product.quantity"
                 @keydown.enter="updateProduct(product)" />
