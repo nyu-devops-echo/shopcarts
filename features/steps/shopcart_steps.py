@@ -7,6 +7,9 @@ from os import getenv
 import json
 import requests
 from behave import *
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 @when(u'I visit the "Home Page"')
 def step_impl(context):
@@ -32,18 +35,6 @@ def step_impl(context, user_id, value):
     element = context.driver.find_element_by_id(user_id)
     element.clear()
     element.send_keys(value)
-
-@when(u'I click the "Add Products" button')
-def step_impl(context):
-    context.driver.find_element_by_id('toggle-products').click()
-
-@when(u'I add "{value}" "{product}" to the cart')
-def step_impl(context, value, product):
-    select_element = context.driver.find_element_by_id('product-1-select')
-    for option in select_element.find_elements_by_tag_name('option'):
-        if option.text == product:
-            option.click()
-            break
 
 @when(u'I click the "{button}" button')
 def step_impl(context, button):
@@ -80,6 +71,12 @@ def step_impl(context):
 def step_impl(context, user_id):
     button_id = 'view-shopcart-' + user_id
     context.driver.find_element_by_id(button_id).click()
+    wait = WebDriverWait(context.driver, 10)
+    wait.until(EC.visibility_of_element_located((By.ID, 'shopcart-header')))
+
+@then(u'I should see "{message}" in the header')
+def step_impl(context, message):
+    assert message in context.driver.find_element_by_id('shopcart-header').text
 
 @when(u'I delete product "{product_id}" from the cart')
 def step_impl(context, product_id):
@@ -90,3 +87,21 @@ def step_impl(context, product_id):
 def step_impl(context, user_id):
     element = context.driver.find_element_by_id('shopcarts-table-list')
     assert not element.find_elements_by_id('shopcart-' + user_id + '-row')
+
+@then(u'I should see "{message}" on the cart page')
+def step_impl(context, message):
+    parent = context.driver.find_element_by_class_name('mb-3')
+    child = parent.find_element_by_class_name('card-body')
+    assert message in child.text
+
+@when(u'I add "{quantity}" of Product "{product_id}" to the cart')
+def step_impl(context, quantity, product_id):
+    element = context.driver.find_element_by_id('product-' + product_id + '-quantity' )
+    element.clear()
+    element.send_keys(int(quantity))
+
+@then(u'I should see "{quantity}" of Product "{product_id}" in the products list')
+def step_impl(context, quantity, product_id):
+    assert context.driver.find_element_by_id('shopcart-product-' + product_id)
+    element_value = context.driver.find_element_by_id('product-' + product_id + '-quantity').get_attribute('value')
+    assert quantity == element_value
