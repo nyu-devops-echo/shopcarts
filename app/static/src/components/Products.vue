@@ -8,7 +8,7 @@
       <div class="form-group row" v-for="product in products">
         <label :for="`product-${product.id}`" class="col-sm col-form-label col-form-label-sm">{{ product.name }}</label>
         <div class="col-sm">
-          <input type="number" class="form-control" :id="`product-${product.id}-quantity`" v-model="value[product.id]" placeholder="0" @change="updateProducts"/>
+          <input type="number" class="form-control" :id="`product-${product.id}-select`" v-model="value[product.id]" placeholder="0" @change="updateProducts"/>
         </div>
       </div>
 

@@ -17,11 +17,8 @@
             </div>
 
             <div class="col-sm">
-              <input type="number"
-                :id="`product-${product.id}-quantity`"
-                class="form-control form-control-sm"
-                v-model="product.quantity"
-                @keydown.enter="updateProduct(product)" />
+              <h6 class="mb-1" :id="`product-${product.id}-quantity`"
+              v-model="product.quantity">{{ product.quantity}}</h6>
             </div>
 
             <div class="col-sm-2">
