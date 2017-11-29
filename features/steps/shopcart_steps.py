@@ -7,7 +7,6 @@ from os import getenv
 import json
 import requests
 from behave import *
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -71,9 +70,7 @@ def step_impl(context):
 @when(u'I visit Shopcart "{user_id}"')
 def step_impl(context, user_id):
     button_id = 'view-shopcart-' + user_id
-    btn = context.driver.find_element_by_id(button_id)
-    assert btn
-    btn.click()
+    context.driver.find_element_by_id(button_id).click()
     wait = WebDriverWait(context.driver, 10)
     wait.until(EC.visibility_of_element_located((By.ID, 'shopcart-header')))
 
@@ -99,7 +96,6 @@ def step_impl(context, message):
 
 @when(u'I add "{quantity}" of Product "{product_id}" to the cart')
 def step_impl(context, quantity, product_id):
-    assert context.driver.find_element_by_id('product-' + product_id + '-quantity' )
     element = context.driver.find_element_by_id('product-' + product_id + '-quantity' )
     element.clear()
     element.send_keys(int(quantity))
