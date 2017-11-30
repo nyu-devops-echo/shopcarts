@@ -76,3 +76,13 @@ Scenario: Update a Product in a Shopcart
     And I visit Shopcart "1"
     And I update Product "2" to quantity "3"
     Then I should see "3" of Product "2" in the products list
+
+Scenario: Get an existing Shopcart
+    Given the following shopcarts
+        | user_id | product_id | quantity |
+        | 2       | 3          | 5        |
+    When I visit the "Home Page"
+    Then I should see Shopcart "2" in the results
+    When I visit Shopcart "2"
+    Then I should see "2" in the header
+    And I should see "5" of Product "3" in the products list

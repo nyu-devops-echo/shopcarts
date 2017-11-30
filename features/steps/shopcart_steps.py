@@ -97,7 +97,7 @@ def step_impl(context, message):
 
 @when(u'I add "{quantity}" of Product "{product_id}" to the cart')
 def step_impl(context, quantity, product_id):
-    element = context.driver.find_element_by_id('product-' + product_id + '-quantity' )
+    element = context.driver.find_element_by_id('product-' + product_id + '-select' )
     element.clear()
     element.send_keys(int(quantity))
 
