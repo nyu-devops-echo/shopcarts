@@ -18,7 +18,6 @@ def init_db(app, migrate_db=True):
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-
     db.init_app(app)
 
     if not migrate_db:
