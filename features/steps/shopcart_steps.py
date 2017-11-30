@@ -120,6 +120,14 @@ def step_impl(context, quantity):
     else:
         assert element.find_elements_by_id('empty-shopcarts')
 
+@when(u'I filter by product "{product_name}"')
+def step_impl(context, product_name):
+    select_element = context.driver.find_element_by_id('filter')
+    for option in select_element.find_elements_by_tag_name('option'):
+        if option.text == product_name:
+            option.click()
+            break
+    
 @when(u'I update product "{product_id}" to quantity "{quantity}"')
 def step_impl(context, product_id, quantity):
     element = context.driver.find_element_by_id('shopcart-product-' + product_id + '-quantity')

@@ -68,6 +68,19 @@ Scenario: Prune Shopcarts
     Then I should have "0" Shopcarts in the results
     And I should see "No Shopcarts"
 
+Scenario: Query by product
+    Given the following shopcarts
+        | user_id | product_id | quantity |
+        | 1       | 2          | 5        |
+        | 2       | 3          | 1        |
+        | 3       | 2          | 2        |
+    When I visit the "Home Page"
+    And I filter by product "Pen"
+    Then I should see Shopcart "1" in the results
+    And I should see Shopcart "3" in the results
+    When I filter by product "Pinepple"
+    Then I should see Shopcart "2" in the results
+
 Scenario: Update a Product in a Shopcart
     Given the following shopcarts
         | user_id | product_id | quantity |
