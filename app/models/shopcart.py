@@ -1,4 +1,5 @@
-from . import db
+import warnings
+from app import db
 from .product import Product
 from .dataerror import DataValidationError
 
@@ -99,6 +100,13 @@ class Shopcart(db.Model):
                     "quantity": product.quantity
                 } for product in self.products}
         }
+
+    @staticmethod
+    def init_db():
+        """ Initializes the database session """
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            db.create_all() # make our sqlalchemy tables
 
     @staticmethod
     def all():

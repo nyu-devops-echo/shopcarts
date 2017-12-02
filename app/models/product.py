@@ -1,4 +1,4 @@
-from . import db
+from app import db
 
 class Product(db.Model):
     # define the database table

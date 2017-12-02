@@ -6,12 +6,12 @@ This module contains the microservice code for
     models
 """
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 # Create the Flask aoo
 app = Flask(__name__)
+app.config.from_object('config')
 
-from .models import init_db
-init_db(app)
+db = SQLAlchemy(app)
 
-# Server needs app so must be placed after app is created
-from . import server
+from app import server, models

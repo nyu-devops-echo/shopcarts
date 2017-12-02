@@ -1,35 +1,38 @@
 import unittest
+import os
 import json
 from flask_api import status
-from app import server
-from app.models import db
+from app import db, server
+
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts_test')
 
 class TestServer(unittest.TestCase):
     """ Shopcarts Server Tests """
+
+    @classmethod
+    def setUpClass(cls):
+        server.app.debug = False
+        # Set up the test database
+        if DATABASE_URI:
+            server.app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
+
     def setUp(self):
-        self.app = server.app.test_client()
-        server.app.debug = True
-        server.app.app_context().push()
+        server.init_db()
+        db.drop_all()    # clean up the last tests
+        db.create_all()  # create new tables
 
-        # Start transaction for testing
-        self.connection = db.engine.connect()
-        self.trans = self.connection.begin()
-        db.session.configure(bind=self.connection, binds={})
-
-        server.Shopcart.remove_all()
-        server.Product.query.delete()
+        # Setup test data
         server.Product.seed_db()
-
         server.Shopcart(1).save()
         server.Shopcart(2).save()
         # uid 3 is used in test_get_nonexistent_shopcart
         server.Shopcart(4, {1: 7, 2: 21, 3: 55}).save()
 
+        self.app = server.app.test_client()
+
     def tearDown(self):
-        # Clean up after tests
-        self.trans.rollback()
-        self.connection.close()
         db.session.remove()
+        db.drop_all()
 
     def test_index(self):
         """ Test the Home Page """

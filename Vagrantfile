@@ -57,7 +57,6 @@ Vagrant.configure("2") do |config|
     # Install app dependencies
     cd /vagrant
     sudo pip install -r requirements.txt
-    npm install
   SHELL
 
   ######################################################################
@@ -71,8 +70,18 @@ Vagrant.configure("2") do |config|
 
   # Add MySQL docker container
   config.vm.provision "docker" do |d|
-    d.pull_images "mysql"
-    d.run "mysql",
-      args: "--restart=always -d --name mysql -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=shopcarts"
+    d.pull_images "mariadb"
+    d.run "mariadb",
+      args: "--restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root"
   end
+
+  # Create the database after Docker is running
+  config.vm.provision "shell", inline: <<-SHELL
+    # Wait for mariadb to come up
+    echo "Waiting 20 seconds for mariadb to start..."
+    sleep 20
+    cd /vagrant
+    python3 db_create.py shopcarts
+    python3 db_create.py shopcarts_test
+  SHELL
 end
