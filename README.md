@@ -1,5 +1,7 @@
 # Shopcarts
 
+[![Build Status](https://travis-ci.org/nyu-devops-echo/shopcarts.svg?branch=master)](https://travis-ci.org/nyu-devops-echo/shopcarts)
+
 This is a RESTful shopcarts service that allows users to create, delete, and modify shopcarts.
 
 ## Running
