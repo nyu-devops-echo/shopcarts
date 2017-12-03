@@ -1,30 +1,28 @@
 import unittest
-from app import app
-from app.models import db
+import os
+from app import app, db
 from app.models.product import Product
 from app.models.shopcart import Shopcart
 
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts_test')
+
 class TestProduct(unittest.TestCase):
     """ Product Model Tests """
-    
+
+    @classmethod
+    def setUpClass(cls):
+        app.debug = False
+        # Set up the test database
+        if DATABASE_URI:
+            app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
+
     def setUp(self):
-        # Push app context for flask-sqlalchemy
-        ctx = app.app_context()
-        ctx.push()
-
-        # Start transaction for testing
-        self.connection = db.engine.connect()
-        self.trans = self.connection.begin()
-        db.session.configure(bind=self.connection, binds={})
-
-        Shopcart.remove_all()
-        Product.query.delete()
+        db.drop_all()    # clean up the last tests
+        db.create_all()  # make our sqlalchemy tables
 
     def tearDown(self):
-        # Clean up after tests
-        self.trans.rollback()
-        self.connection.close()
         db.session.remove()
+        db.drop_all()
 
     def test_it_can_be_instantiated(self):
         """ Test Instantiation """

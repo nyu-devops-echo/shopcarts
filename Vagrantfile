@@ -36,28 +36,30 @@ Vagrant.configure("2") do |config|
     apt-get install -y git python3 python3-pip mysql-client-core-5.7
     pip3 install -U pip
     apt-get -y autoremove
-    # Install PhantomJS for Selenium browser support
-    echo "\n***********************************"
-    echo " Installing PhantomJS for Selenium"
-    echo "***********************************\n"
-    sudo apt-get install -y libxft-dev libjpeg-dev libxslt1-dev libhyphen-dev
-    # PhantomJS https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-    cd ~
-    export PHANTOM_JS="phantomjs-2.5.0-beta-linux-ubuntu-xenial-x86_64"
-    export PHANTOM_JS_DIR="phantomjs-2.5.0-beta-ubuntu-xenial"
-    wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOM_JS.tar.gz
-    sudo tar xvf $PHANTOM_JS.tar.gz
-    sudo mv $PHANTOM_JS_DIR /usr/local/share
-    sudo ln -sf /usr/local/share/$PHANTOM_JS_DIR/bin/phantomjs /usr/local/bin
-    chmod +x /usr/local/bin/phantomjs
-    rm -f $PHANTOM_JS.tar.gz
     # Install Nodejs and NPM 
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
     sudo apt-get install -y nodejs
     # Install app dependencies
     cd /vagrant
     sudo pip install -r requirements.txt
-    npm install
+  SHELL
+
+  ######################################################################
+  # Add Chrome and Chromedriver
+  ######################################################################
+  config.vm.provision "shell", inline: <<-SHELL
+    # Install Chrome and chromedriver for Selenium browser support
+    apt-get install -y unzip
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    dpkg -i google-chrome*.deb
+    apt-get -f install -y
+    wget -N http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip
+    unzip chromedriver_linux64.zip
+    chmod +x chromedriver
+    mv -f chromedriver /usr/local/share/chromedriver
+    ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+    ln -s /usr/local/share/chromedriver /usr/bin/chromedriver
+    apt-get update
   SHELL
 
   ######################################################################
@@ -71,8 +73,18 @@ Vagrant.configure("2") do |config|
 
   # Add MySQL docker container
   config.vm.provision "docker" do |d|
-    d.pull_images "mysql"
-    d.run "mysql",
-      args: "--restart=always -d --name mysql -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=shopcarts"
+    d.pull_images "mariadb"
+    d.run "mariadb",
+      args: "--restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root"
   end
+
+  # Create the database after Docker is running
+  config.vm.provision "shell", inline: <<-SHELL
+    # Wait for mariadb to come up
+    echo "Waiting 20 seconds for mariadb to start..."
+    sleep 20
+    cd /vagrant
+    python3 db_create.py shopcarts
+    python3 db_create.py shopcarts_test
+  SHELL
 end

@@ -198,6 +198,7 @@ def check_content_type(content_type):
     #app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
 
-@app.before_first_request
-def seed_db():
+def init_db():
+    """ Initializes the SQLAlchemy app """
+    Shopcart.init_db()
     Product.seed_db()
