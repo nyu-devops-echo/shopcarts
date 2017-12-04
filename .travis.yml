@@ -7,10 +7,10 @@ services:
 
 before_install:
 - docker pull mariadb
-- docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
+- docker run --restart=always -d --name mariadb -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
 - docker ps -a
-- echo "Waiting 5 seconds for mariadb to start..."
-- sleep 5
+- echo "Waiting 20 seconds for mariadb to start..."
+- sleep 20
 - python3 db_create.py shopcarts
 - python3 db_create.py shopcarts_test
 
