@@ -1,5 +1,11 @@
+dist: precise
+
 services:
   - mysql
+
+
+#addons:
+#  mariadb: '10.2'
 
 language: python
 python:
