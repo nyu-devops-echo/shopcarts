@@ -2,15 +2,19 @@ language: python
 python:
   - "3.5"
 
+
 # command to install dependencies
 install: "pip install -r requirements.txt"
 
 services:
   - docker
 
+
+sudo: required
+
 before_script:
 - docker pull mariadb
-- docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
+- sudo docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
 - docker ps -a
 - echo "Waiting 5 seconds for mariadb to start..."
 - sleep 5
