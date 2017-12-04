@@ -17,7 +17,7 @@ before_install:
 - sudo mkdir -p /var/lib/mysql
 - sudo chown travis:travis /var/lib/mysql
 - docker pull mariadb
-- docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e mariadb
+- docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
 - docker ps -a
 - echo "Waiting 20 seconds for mariadb to start..."
 - sleep 20
