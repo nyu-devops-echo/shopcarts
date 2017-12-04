@@ -36,23 +36,19 @@ class TestVcapServices(unittest.TestCase):
 
         self.assertEqual(result, db_uri)
 
+
     def test_get_database_uri_local(self):
         """ Test if it gets the local db uri """
-        if 'VCAP_SERVICES' in os.environ:
-            DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://vcap_user:vcap_pass@127.0.0.2:3307/vacp')
-        elif 'TRAVIS' in os.environ:
-            DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:@localhost:3306/shopcarts')
-        else:
-            DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts')
+        DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts')
 
         db_uri = DATABASE_URI
-        result = get_database_uri()
+        result = 'mysql+pymysql://root:@localhost:3306/shopcarts'
 
         self.assertEqual(result, db_uri)
 
     @patch.dict(os.environ, {'TRAVIS': '1'})
     def test_get_database_uri_travis(self):
-        """ Test if it gets the vcap db uri travis"""
+        """ Test if it gets the travis db uri"""
         if 'VCAP_SERVICES' in os.environ:
             DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://vcap_user:vcap_pass@127.0.0.2:3307/vcap')
         elif 'TRAVIS' in os.environ:
