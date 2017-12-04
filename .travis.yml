@@ -1,22 +1,25 @@
+dist: xenial
 language: python
 python:
   - "3.5"
 
-services:
-  - docker
+# services:
+#   - docker
 
-sudo: required
+#sudo: required
 
 # commands to start db
-before_install:
-# Disable services enabled by default
-- sudo /etc/init.d/mysql stop
-- docker pull mariadb
-- docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
-- docker ps -a
-- echo "Waiting 20 seconds for mariadb to start..."
-- sleep 20
+# before_install:
+# # Disable services enabled by default
+# - sudo /etc/init.d/mysql stop
+# - docker pull mariadb
+# - docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
+# - docker ps -a
+# - echo "Waiting 20 seconds for mariadb to start..."
+# - sleep 20
 
+addons:
+  mariadb: '10.3'
 # commands to install dependencies
 install: "pip install -r requirements.txt"
 
