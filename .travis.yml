@@ -5,21 +5,22 @@ python:
 services:
   - docker
 
+# commands to start db
 before_install:
 - docker pull mariadb
 - docker run --restart=always -d --name mariadb -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
 - docker ps -a
 - echo "Waiting 20 seconds for mariadb to start..."
 - sleep 20
+
+# commands to install dependencies
+install: "pip install -r requirements.txt"
+
+# commands to start db tables
+before_script:
 - python db_create.py shopcarts
 - python db_create.py shopcarts_test
-
-# command to install dependencies
-install: "pip install -r requirements.txt"
 
 # commands to run tests
 script:
   - nosetests
-
-# after_success:
-#   - codecov
