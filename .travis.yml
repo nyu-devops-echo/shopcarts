@@ -19,7 +19,7 @@ python:
 # - sleep 20
 
 addons:
-  mariadb: '10.3'
+  mariadb: '10.2'
 # commands to install dependencies
 install: "pip install -r requirements.txt"
 
