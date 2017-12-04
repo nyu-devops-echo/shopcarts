@@ -34,7 +34,7 @@ class TestVcapServices(unittest.TestCase):
     def test_get_database_uri_local(self):
         """ Test if it gets the local db uri """
         db_uri = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(
-            'root', 'root', '127.0.0.1', '3306', 'shopcarts')
+            'root', 'root', 'localhost', '3306', 'shopcarts')
 
         result = get_database_uri()
 

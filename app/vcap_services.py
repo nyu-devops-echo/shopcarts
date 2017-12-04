@@ -43,7 +43,7 @@ def get_database_uri():
     else:
         username = 'root'
         password = 'root'
-        hostname = '127.0.0.1'
+        hostname = 'localhost'
         port = '3306'
         name = 'shopcarts'
 
