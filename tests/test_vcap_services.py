@@ -18,14 +18,20 @@ VCAP_SERVICES = {
     ]
 }
 
+if 'VCAP_SERVICES' in os.environ:
+    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://vcap_user:vcap_pass@127.0.0.2:3307/vacp')
+elif 'TRAVIS' in os.environ:
+    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/shopcarts_test')
+else:
+    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts_test')
+
 class TestVcapServices(unittest.TestCase):
     """ VCAP Services Tests """
 
     @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
     def test_get_database_uri_vcap(self):
         """ Test if it gets the vcap db uri """
-        db_uri = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(
-            'vcap_user', 'vcap_pass', '127.0.0.2', '3307', 'vcap')
+        db_uri = DATABASE_URI
 
         result = get_database_uri()
 
