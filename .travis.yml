@@ -5,10 +5,14 @@ python:
 services:
   - docker
 
+sudo: required
+
 # commands to start db
 before_install:
+# Disable services enabled by default
+- sudo /etc/init.d/mysql stop
 - docker pull mariadb
-- docker run --restart=always -d --name mariadb -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
+- docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
 - docker ps -a
 - echo "Waiting 20 seconds for mariadb to start..."
 - sleep 20
