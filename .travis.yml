@@ -11,8 +11,8 @@ before_install:
 - docker ps -a
 - echo "Waiting 20 seconds for mariadb to start..."
 - sleep 20
-- python3 db_create.py shopcarts
-- python3 db_create.py shopcarts_test
+- python db_create.py shopcarts
+- python db_create.py shopcarts_test
 
 # command to install dependencies
 install: "pip install -r requirements.txt"
