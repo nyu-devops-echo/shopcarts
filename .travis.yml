@@ -1,30 +1,10 @@
+services:
+  - mysql
+
 language: python
 python:
   - "3.5"
 
-services:
-  - docker
-
-sudo: required
-
-#commands to start db
-before_install:
-# Disable services enabled by default
-- sudo service mysql stop
-- sudo apt-get remove --purge *mysql\*
-- sudo apt-get autoremove
-- sudo apt-get autoclean
-- sudo mkdir -p /var/lib/mysql
-- sudo chown travis:travis /var/lib/mysql
-- docker pull mariadb
-- docker run --restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
-- docker ps -a
-- echo "Waiting 20 seconds for mariadb to start..."
-- sleep 20
-
-# addons:
-#   mariadb: '10.3'
-# commands to install dependencies
 install: "pip install -r requirements.txt"
 
 # commands to start db tables
@@ -35,3 +15,7 @@ before_script:
 # commands to run tests
 script:
   - nosetests
+
+# commands to run tests
+after_script:
+  - codecov
