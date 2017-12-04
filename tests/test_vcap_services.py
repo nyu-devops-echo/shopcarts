@@ -36,7 +36,6 @@ class TestVcapServices(unittest.TestCase):
 
         self.assertEqual(result, db_uri)
 
-    @patch.dict(os.environ, [])
     def test_get_database_uri_local(self):
         """ Test if it gets the local db uri """
         if 'VCAP_SERVICES' in os.environ:
@@ -47,8 +46,13 @@ class TestVcapServices(unittest.TestCase):
             DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts')
 
         db_uri = DATABASE_URI
-        result = get_database_uri()
+        
 
+        _environ = dict(os.environ)
+        os.environ.clear()
+        result = get_database_uri()
+        os.environ.update(_environ)
+        
         self.assertEqual(result, db_uri)
 
     @patch.dict(os.environ, {'TRAVIS': '1'})
