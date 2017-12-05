@@ -11,13 +11,6 @@ from . import app
 ######################################################################
 @app.route('/')
 def index():
-    """
-    User interface
-    ---
-    tags:
-      - Shopcarts
-    description: The Shopcarts endpoint allows you to query shopcarts
-    """
     return app.send_static_file('index.html')
 
 ######################################################################
