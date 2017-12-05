@@ -1,6 +1,7 @@
 <template>
   <div id="app-js" class="container">
     <h1 class="text-center mt-3">Shopcarts REST API Service</h1>
+    <a href="/apidocs/index.html">Documentation</a>
     <hr />
 
     <transition name="component-fade" mode="out-in">
