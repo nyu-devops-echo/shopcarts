@@ -1,0 +1,25 @@
+dist: precise
+
+services:
+  - mysql
+addons:
+ mariadb: '10.2'
+
+language: python
+python:
+  - "3.5"
+
+install: "pip install -r requirements.txt"
+
+# commands to start db tables
+before_script:
+- python db_create.py shopcarts
+- python db_create.py shopcarts_test
+
+# commands to run tests
+script:
+  - nosetests
+
+# commands to run tests
+after_script:
+  - codecov

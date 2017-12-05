@@ -4,7 +4,10 @@ import json
 from flask_api import status
 from app import db, server
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts_test')
+if 'TRAVIS' in os.environ:
+    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/shopcarts_test')
+else:
+    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts_test')
 
 class TestServer(unittest.TestCase):
     """ Shopcarts Server Tests """
