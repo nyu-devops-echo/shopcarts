@@ -25,7 +25,7 @@ app.config['SWAGGER'] = {
             "title": "Shopcarts REST API Service",
             "description":"This is the Shopcart API",
             "endpoint": 'v1_spec',
-            "route": '/apidocs',
+            "route": '/v1/spec',
             "basePath": '/'
         }
     ],
