@@ -92,14 +92,16 @@ class Shopcart(db.Model):
 
     def serialize(self):
         """ Serializes a shopcart into a dictionary """
-        return {
-            "user_id": self.user_id,
-            "products": {
-                product.product.id: {
-                    **product.product.serialize(),
-                    "quantity": product.quantity
-                } for product in self.products}
-        }
+        u_dict = {"user_id": self.user_id,}
+        prods = {"products": {} }
+        for p in self.products:
+            p_dict = { p.product.id: p.product.serialize() }
+            p_dict[p.product.id].update( {"quantity": p.quantity } )
+            prods['products'].update(p_dict)
+        if prods:
+            u_dict.update(prods)
+        
+        return u_dict
 
     @staticmethod
     def init_db():
