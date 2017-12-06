@@ -18,6 +18,46 @@ def index():
 ######################################################################
 @app.route('/shopcarts/<int:id>', methods=['GET'])
 def get_shopcarts(id):
+    """
+    Get a Shopcart
+    This endpoint will get a shopcart.
+    ---
+    tags:
+      - Shopcarts
+    produces:
+      - application/json
+    parameters:
+      - name: user_id
+        in: path
+        description: User id shopcart to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Shopcart found
+        schema:
+          id: Shopcart
+          properties:
+            user_id:
+              type: integer
+              description: user id
+              required: true
+              default: 1
+            products:
+              type: dict
+              description: products in the shopcart
+              default: {
+                "2": {
+                  "description": "Stationery", 
+                  "id": 2, 
+                  "name": "Pen", 
+                  "price": 3.4, 
+                  "quantity": 1
+                }
+              }
+      404:
+        description: Shopcart not found
+    """
     cart = Shopcart.find(id)
     if cart:
         message = cart.serialize()
