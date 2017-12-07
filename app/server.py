@@ -27,7 +27,7 @@ def get_shopcarts(id):
     produces:
       - application/json
     parameters:
-      - name: user_id
+      - name: id
         in: path
         description: User id shopcart to retrieve
         type: integer
@@ -38,7 +38,7 @@ def get_shopcarts(id):
         schema:
           id: Shopcart
           properties:
-            user_id:
+            id:
               type: integer
               description: user id
               required: true
@@ -46,12 +46,13 @@ def get_shopcarts(id):
             products:
               type: dict
               description: products in the shopcart
+              required: true
               default: {
                 "2": {
-                  "description": "Stationery", 
-                  "id": 2, 
-                  "name": "Pen", 
-                  "price": 3.4, 
+                  "description": "Stationery",
+                  "id": 2,
+                  "name": "Pen",
+                  "price": 3.4,
                   "quantity": 1
                 }
               }
