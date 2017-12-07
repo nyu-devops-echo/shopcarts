@@ -151,6 +151,53 @@ def delete_product(user_id, pid):
 ######################################################################
 @app.route('/shopcarts', methods=['GET'])
 def get_all_shopcarts():
+
+    """
+    Retrieve a list of Shopcart
+    This endpoint will return all Shopcarts unless a query parameter is specified
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to query Shopcarts
+    parameters:
+      - name: pid
+        in: query
+        description: the Product ID you want to query Shopcarts by
+        required: false
+        type: string
+    responses:
+      200:
+        description: An array of Shopcarts
+        schema:
+          type: array
+          items:
+            schema:
+              id: Shopcarts
+              properties:
+                user_id:
+                  type: integer
+                  description: Shopcart's unique ID associated with a user
+                products:
+                  type: array
+                  items:
+                    schema:
+                        id: Products
+                        properties:
+                            product_id:
+                                type: integer
+                                description: Product's unique id
+                            name:
+                                type: string
+                                description: Name of the product
+                            price:
+                                type: integer
+                                description: Cost of the product
+                            description:
+                                type: string
+                                description: Description of the product
+                  description: Products in the Shopcart
+      """
+
     pid = request.args.get('pid')
     if pid:
         carts = Shopcart.find_by_product( int(pid) )
