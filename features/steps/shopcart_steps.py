@@ -41,8 +41,8 @@ def step_impl(context, user_id, value):
 def step_impl(context, button):
     button_id = button.lower() + '-btn'
     context.driver.find_element_by_id(button_id).click()
-    # wait = WebDriverWait(context.driver, 10)
-    # wait.until(EC.visibility_of_element_located((By.ID, 'shopcart-header')))
+    wait = WebDriverWait(context.driver, 10)
+    wait.until(EC.visibility_of_element_located((By.ID, 'shopcart-header')))
 
 @then(u'I should see Shopcart "{id}" in the results')
 def step_impl(context, id):
@@ -131,7 +131,7 @@ def step_impl(context, product_name):
         if option.text == product_name:
             option.click()
             break
-    
+
 @when(u'I update product "{product_id}" to quantity "{quantity}"')
 def step_impl(context, product_id, quantity):
     element = context.driver.find_element_by_id('shopcart-product-' + product_id + '-quantity')
