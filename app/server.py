@@ -35,7 +35,20 @@ def get_shopcarts(id):
 def delete_shopcarts(id):
     """
     Delete a Shopcart
-    This endpoint will delete a Shopcart based on the id specified in the path
+    This endpoint will delete a Shopcart based the id specified in the path
+    ---
+    tags:
+      - Shopcarts
+    description: Deletes a Shopcart from the database
+    parameters:
+      - name: id
+        in: path
+        description: ID of Shopcart to delete
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Shopcart deleted
     """
     cart = Shopcart.find(id)
 
