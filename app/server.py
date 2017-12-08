@@ -197,12 +197,9 @@ def add_product(user_id):
         products = request.get_json()
         if isinstance(products,dict):
             products = to_new_format(products)
-        
-        print('ADD ')
+            
         cart.add_products(products)
-        print('tp saving')
         cart.save()
-        print(cart)
     except DataValidationError as e:
         message = {'error': e.args[0]}
         return jsonify(message), status.HTTP_400_BAD_REQUEST
