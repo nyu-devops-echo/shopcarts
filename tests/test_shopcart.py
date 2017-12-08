@@ -6,10 +6,7 @@ from app.models.shopcart import Shopcart
 from app.models.product import Product
 from app.models.dataerror import DataValidationError
 
-if 'TRAVIS' in os.environ:
-    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/shopcarts_test')
-else:
-    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts_test')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:@localhost:3306/shopcarts_test')
 
 class TestShopcart(unittest.TestCase):
     """ Shopcart Model Tests """

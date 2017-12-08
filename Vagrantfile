@@ -36,17 +36,31 @@ Vagrant.configure("2") do |config|
     apt-get install -y git python3 python3-pip mysql-client-core-5.7
     pip3 install -U pip
     apt-get -y autoremove
-    
     # Install Nodejs and NPM 
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
     sudo apt-get install -y nodejs
-    sudo npm install phantomjs
     # Install app dependencies
     cd /vagrant
     sudo pip install -r requirements.txt
   SHELL
 
-
+  ######################################################################
+  # Add Chrome and Chromedriver
+  ######################################################################
+  config.vm.provision "shell", inline: <<-SHELL
+    # Install Chrome and chromedriver for Selenium browser support
+    apt-get install -y unzip
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    dpkg -i google-chrome*.deb
+    apt-get -f install -y
+    wget -N http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip
+    unzip chromedriver_linux64.zip
+    chmod +x chromedriver
+    mv -f chromedriver /usr/local/share/chromedriver
+    ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+    ln -s /usr/local/share/chromedriver /usr/bin/chromedriver
+    apt-get update
+  SHELL
 
   ######################################################################
   # Add MySQL docker container
