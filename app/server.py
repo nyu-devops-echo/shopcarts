@@ -35,7 +35,20 @@ def get_shopcarts(id):
 def delete_shopcarts(id):
     """
     Delete a Shopcart
-    This endpoint will delete a Shopcart based on the id specified in the path
+    This endpoint will delete a Shopcart based the id specified in the path
+    ---
+    tags:
+      - Shopcarts
+    description: Deletes a Shopcart from the database
+    parameters:
+      - name: id
+        in: path
+        description: ID of Shopcart to delete
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Shopcart deleted
     """
     cart = Shopcart.find(id)
 
@@ -65,7 +78,10 @@ def create_shopcart():
 
     # Create the Cart
     products = data['products'] if 'products' in data else None
+
     try:
+        if isinstance(products,dict):
+            products = to_new_format(products)
         cart = Shopcart(user_id, products)
     except DataValidationError as e:
         message = {'error': e.args[0]}
@@ -121,14 +137,80 @@ def update_shopcart(user_id, pid):
 ######################################################################
 @app.route('/shopcarts/<int:user_id>/products', methods=['POST'])
 def add_product(user_id):
-    """Add a product to the shopcart with the given user_id"""
+    """
+    Add a Product to a Shopcart
+    This endpoint will add a Product to a Shopcart based on the data in the body that is posted
+    ---
+    tags:
+      - Shopcarts
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    description: The Shopcarts endpoint allows you to add a Product to a Shopcart
+    parameters:
+      - name: id
+        in: path
+        description: ID of Shopcart to retrieve
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: data
+          required:
+            - pid
+            - quantity
+          properties:
+            pid:
+              type: integer
+              description: Unique id of Product to add
+            quantity:
+              type: integer
+              description: Amount of Product to add
+    responses:
+      200:
+        description: Product Added
+        schema:
+          type: array
+          items:
+            schema:
+              id: Shopcarts
+              properties:
+                user_id:
+                  type: integer
+                  description: Shopcart's unique ID associated with a user
+                products:
+                  type: array
+                  items:
+                    schema:
+                        id: Products
+                        properties:
+                            product_id:
+                                type: integer
+                                description: Product's unique id
+                            name:
+                                type: string
+                                description: Name of the product
+                            price:
+                                type: integer
+                                description: Cost of the product
+                            description:
+                                type: string
+                                description: Description of the product
+      400:
+        description: Bad Request (the posted data was not valid)
+      """
     cart = Shopcart.find(user_id)
 
     if not cart:
         return jsonify("Cart with id '{}' was not found.".format(user_id)), status.HTTP_404_NOT_FOUND
 
     try:
-        cart.add_products(request.get_json())
+        products = request.get_json()
+        if isinstance(products,dict):
+            products = to_new_format(products)
+        cart.add_products(products)
         cart.save()
     except DataValidationError as e:
         message = {'error': e.args[0]}
@@ -151,6 +233,53 @@ def delete_product(user_id, pid):
 ######################################################################
 @app.route('/shopcarts', methods=['GET'])
 def get_all_shopcarts():
+
+    """
+    Retrieve a list of Shopcart
+    This endpoint will return all Shopcarts unless a query parameter is specified
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to query Shopcarts
+    parameters:
+      - name: pid
+        in: query
+        description: the Product ID you want to query Shopcarts by
+        required: false
+        type: string
+    responses:
+      200:
+        description: An array of Shopcarts
+        schema:
+          type: array
+          items:
+            schema:
+              id: Shopcarts
+              properties:
+                user_id:
+                  type: integer
+                  description: Shopcart's unique ID associated with a user
+                products:
+                  type: array
+                  items:
+                    schema:
+                        id: Products
+                        properties:
+                            pid:
+                                type: integer
+                                description: Product's unique id
+                            name:
+                                type: string
+                                description: Name of the product
+                            price:
+                                type: integer
+                                description: Cost of the product
+                            description:
+                                type: string
+                                description: Description of the product
+                  description: Products in the Shopcart
+      """
+
     pid = request.args.get('pid')
     if pid:
         carts = Shopcart.find_by_product( int(pid) )
@@ -165,6 +294,17 @@ def get_all_shopcarts():
 ######################################################################
 @app.route('/shopcarts/prune', methods=['DELETE'])
 def prune_empty_shopcarts():
+    """
+    Prune all Shopcarts
+    This endpoint will remove all empty Shopcarts (i.e. Shopcarts with no Products)
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to Prune all empty Shopcarts
+    responses:
+      204:
+        description: Shopcarts have been pruned
+      """
     Shopcart.prune()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
@@ -183,7 +323,17 @@ def get_products():
 ######################################################################
 @app.route('/shopcarts/reset', methods=['DELETE'])
 def shopcarts_reset():
-    """ Removes all shopcarts from the database """
+    """
+    Reset  Shopcarts
+    This endpoint will remove ALL Shopcarts
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to remove all Shopcarts
+    responses:
+      204:
+        description: All Shopcarts have been removed
+      """
     Shopcart.remove_all()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
@@ -201,3 +351,10 @@ def init_db():
     """ Initializes the SQLAlchemy app """
     Shopcart.init_db()
     Product.seed_db()
+
+def to_new_format(products):
+    prods =[]
+    if products:
+        for pid,q in products.items():
+            prods.append({'pid':pid,'quantity':q})
+    return prods

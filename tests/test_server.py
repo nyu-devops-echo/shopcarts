@@ -29,7 +29,7 @@ class TestServer(unittest.TestCase):
         server.Shopcart(1).save()
         server.Shopcart(2).save()
         # uid 3 is used in test_get_nonexistent_shopcart
-        server.Shopcart(4, {1: 7, 2: 21, 3: 55}).save()
+        server.Shopcart(4, [{"pid": 1, "quantity" :7}, {"pid": 2, "quantity": 21}, {"pid":3, "quantity": 55}]).save()
 
         self.app = server.app.test_client()
 
@@ -102,28 +102,29 @@ class TestServer(unittest.TestCase):
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-        cart = {'user_id': 3, 'products': []}
+        cart = {'user_id': 3, "products": [1,2,3]}
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_shopcart_with_a_prod(self):
         """ Create a cart uid 3 with a product id 5"""
         n_cart = len(server.Shopcart.all())
-        cart = {'user_id': 3, "products": 5}
+        cart = {'user_id': 3, "products": [ {"pid": 5, "quantity":1}]}
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
         data = json.loads(resp.data.decode('utf8'))
         self.assertIn('/shopcarts/3', location)
-        self.assertDictContainsSubset({"quantity": 1}, data['products']['5'])
+        self.assertEqual(  5, data['products']['5']['id'])
+        self.assertEqual(  1, data['products']['5']['quantity'])
         self.assertEqual(len(server.Shopcart.all()), n_cart+1)
 
     def test_create_shopcart_prods(self):
         """ Create a shopcart with many products"""
         n_cart = len(server.Shopcart.all())
         # add a new shopcart with many products
-        new_shopcart = {"user_id": 3, "products": {1: 13, 2: 34}}
+        new_shopcart ={"user_id": 3, "products": [{"pid": 1, "quantity":13}, {"pid": 2, "quantity":34}]}
         data = json.dumps(new_shopcart)
         resp = self.app.post('/shopcarts', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
@@ -135,9 +136,8 @@ class TestServer(unittest.TestCase):
 
         # Check the data is correct
         new_json = json.loads(resp.data.decode('utf8'))
-
-        self.assertDictContainsSubset({"quantity": 13}, new_json['products']['1'])
-        self.assertDictContainsSubset({"quantity": 34}, new_json['products']['2'])
+        self.assertEqual(13, new_json['products']['1']['quantity'] )
+        self.assertEqual(34, new_json['products']['2']['quantity'])
         self.assertEqual(len(server.Shopcart.all()), n_cart+1)
 
     def test_create_shopcart_invalid_prods(self):
@@ -286,7 +286,7 @@ class TestServer(unittest.TestCase):
     def test_add_new_product_to_cart(self):
         """ Add a new product to the cart """
         product_count = len(server.Shopcart.find(2).products)
-        data = {1: 2}
+        data = [{"pid": 1, "quantity": 2}]
 
         resp = self.app.post('/shopcarts/2/products', data=json.dumps(data), content_type='application/json')
         data = json.loads(resp.data.decode('utf8'))
@@ -298,7 +298,7 @@ class TestServer(unittest.TestCase):
     def test_add_multiple_new_products_to_cart(self):
         """ Add multiple new products to the cart """
         product_count = len(server.Shopcart.find(2).products)
-        data = {1: 2, 2: 4}
+        data = [{"pid": 1, "quantity": 2}, {"pid": 2, "quantity": 4}]
 
         resp = self.app.post('/shopcarts/2/products', data=json.dumps(data), content_type='application/json')
         data = json.loads(resp.data.decode('utf8'))
@@ -311,7 +311,7 @@ class TestServer(unittest.TestCase):
     def test_add_existing_product_to_cart(self):
         """ Add an existing product to the cart """
         product_count = len(server.Shopcart.find(4).products)
-        data = {1: 2}
+        data = [{"pid": 1, "quantity": 2}]
 
         resp = self.app.post('/shopcarts/4/products', data=json.dumps(data), content_type='application/json')
         data = json.loads(resp.data.decode('utf8'))
@@ -323,7 +323,7 @@ class TestServer(unittest.TestCase):
     def test_add_multiple_existing_products_to_cart(self):
         """ Add multiple existing products to the cart """
         product_count = len(server.Shopcart.find(4).products)
-        data = {1: 2, 2: 2}
+        data = [{"pid": 1, "quantity": 2}, {"pid": 2, "quantity": 2}]
 
         resp = self.app.post('/shopcarts/4/products', data=json.dumps(data), content_type='application/json')
         data = json.loads(resp.data.decode('utf8'))
@@ -343,7 +343,7 @@ class TestServer(unittest.TestCase):
 
     def test_add_product_to_nonexistent_cart(self):
         """ Add a product to a nonexistent cart """
-        data = {1: 2}
+        data = [{"pid": 1, "quantity": 2}]
 
         resp = self.app.post('/shopcarts/100/products', data=json.dumps(data), content_type='application/json')
 
@@ -404,6 +404,20 @@ class TestServer(unittest.TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 5)
+
+
+    def test_to_new_format(self):
+        """ To new format"""
+        n_cart = len(server.Shopcart.all())
+        new_dat = {'user_id':7,'products':{'2':3}}
+        resp = self.app.post('/shopcarts', data=json.dumps(new_dat ), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual( 3, data['products']['2']['quantity'] )
+
+        new_dat = {'3':4}
+        resp = self.app.post('/shopcarts/7/products', data=json.dumps(new_dat ), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(4, data['products']['3']['quantity'] )
 
 if __name__ == '__main__':
     unittest.main()

@@ -41,11 +41,10 @@ class Shopcart(db.Model):
         db.session.commit()
 
     def add_products(self, products):
-        if type(products) != dict:
-            raise DataValidationError('Invalid products: body of request contained bad or no data')
-
-        for pid, quantity in products.items():
-            self.add_product(int(pid), quantity)
+        for p in products:
+            if type(p) != dict:
+                raise DataValidationError('Invalid products: body of request contained bad or no data')
+            self.add_product( int(p['pid']), p['quantity'])
 
     def add_product(self, pid, quant=1):
         """ Adds a tuple of product, quantity to the product dict """
@@ -66,7 +65,7 @@ class Shopcart(db.Model):
 
         db.session.delete(self)
         db.session.commit()
-    
+
     def update_product(self, pid, quantity):
         """ Updates a product quantity """
         if not quantity:
@@ -151,14 +150,16 @@ class Shopcart(db.Model):
         if isinstance(products, int) and products >= 0:
             return [Shopcart.create_product(products, 1)]
 
-        if not isinstance(products, dict):
+        if not isinstance(products, list):
             raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
 
-        # Products is a dict of proper tuples
-        if all((isinstance(q, int) and (q > 0)) for q in products.values()):
-            return [Shopcart.create_product(product, quantity) for product, quantity in products.items()]
+        # Products is a list of dictionaries
+        for item in products:
+            if type(item) is not dict:
+                raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
 
-        raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
+        return [ Shopcart.create_product(obj['pid'], obj['quantity']) for obj in products ]
+
 
     @staticmethod
     def find_by_product(pid):
