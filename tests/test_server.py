@@ -102,9 +102,9 @@ class TestServer(unittest.TestCase):
         resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-        # cart = {'user_id': 3, 'products': {}}
-        # resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
-        # self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        cart = {'user_id': 3, "products": [1,2,3]}
+        resp = self.app.post('/shopcarts', data=json.dumps(cart), content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_shopcart_with_a_prod(self):
         """ Create a cart uid 3 with a product id 5"""
@@ -404,6 +404,20 @@ class TestServer(unittest.TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 5)
+
+
+    def test_to_new_format(self):
+        """ To new format"""
+        n_cart = len(server.Shopcart.all())
+        new_dat = {'user_id':7,'products':{'2':3}}
+        resp = self.app.post('/shopcarts', data=json.dumps(new_dat ), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual( 3, data['products']['2']['quantity'] )
+
+        new_dat = {'3':4}
+        resp = self.app.post('/shopcarts/7/products', data=json.dumps(new_dat ), content_type='application/json')
+        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(4, data['products']['3']['quantity'] )
 
 if __name__ == '__main__':
     unittest.main()
