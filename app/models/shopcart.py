@@ -41,9 +41,6 @@ class Shopcart(db.Model):
         db.session.commit()
 
     def add_products(self, products):
-        if type(products) != list:
-            raise DataValidationError('Invalid products: body of request contained bad or no data')
-
         for p in products:
             if type(p) != dict:
                 raise DataValidationError('Invalid products: body of request contained bad or no data')
@@ -144,8 +141,6 @@ class Shopcart(db.Model):
         if products is None:
             return []
 
-        if products == {}:
-            return []
         # Not None
         # Tuple of product, quantity
         if isinstance(products, tuple) and len(products) == 2 and all(isinstance(pq, int) for pq in products):
@@ -162,8 +157,6 @@ class Shopcart(db.Model):
         for item in products:
             if type(item) is not dict:
                 raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
-        
-   
 
         return [ Shopcart.create_product(obj['pid'], obj['quantity']) for obj in products ]
 

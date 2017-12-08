@@ -210,7 +210,6 @@ def add_product(user_id):
         products = request.get_json()
         if isinstance(products,dict):
             products = to_new_format(products)
-            
         cart.add_products(products)
         cart.save()
     except DataValidationError as e:
