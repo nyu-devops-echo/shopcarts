@@ -119,7 +119,10 @@ def create_shopcart():
 
     # Create the Cart
     products = data['products'] if 'products' in data else None
+
     try:
+        if isinstance(products,dict):
+            products = to_new_format(products)
         cart = Shopcart(user_id, products)
     except DataValidationError as e:
         message = {'error': e.args[0]}
@@ -175,14 +178,80 @@ def update_shopcart(user_id, pid):
 ######################################################################
 @app.route('/shopcarts/<int:user_id>/products', methods=['POST'])
 def add_product(user_id):
-    """Add a product to the shopcart with the given user_id"""
+    """
+    Add a Product to a Shopcart
+    This endpoint will add a Product to a Shopcart based on the data in the body that is posted
+    ---
+    tags:
+      - Shopcarts
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    description: The Shopcarts endpoint allows you to add a Product to a Shopcart
+    parameters:
+      - name: id
+        in: path
+        description: ID of Shopcart to retrieve
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: data
+          required:
+            - pid
+            - quantity
+          properties:
+            pid:
+              type: integer
+              description: Unique id of Product to add
+            quantity:
+              type: integer
+              description: Amount of Product to add
+    responses:
+      200:
+        description: Product Added
+        schema:
+          type: array
+          items:
+            schema:
+              id: Shopcarts
+              properties:
+                user_id:
+                  type: integer
+                  description: Shopcart's unique ID associated with a user
+                products:
+                  type: array
+                  items:
+                    schema:
+                        id: Products
+                        properties:
+                            product_id:
+                                type: integer
+                                description: Product's unique id
+                            name:
+                                type: string
+                                description: Name of the product
+                            price:
+                                type: integer
+                                description: Cost of the product
+                            description:
+                                type: string
+                                description: Description of the product
+      400:
+        description: Bad Request (the posted data was not valid)
+      """
     cart = Shopcart.find(user_id)
 
     if not cart:
         return jsonify("Cart with id '{}' was not found.".format(user_id)), status.HTTP_404_NOT_FOUND
 
     try:
-        cart.add_products(request.get_json())
+        products = request.get_json()
+        if isinstance(products,dict):
+            products = to_new_format(products)
+        cart.add_products(products)
         cart.save()
     except DataValidationError as e:
         message = {'error': e.args[0]}
@@ -237,7 +306,7 @@ def get_all_shopcarts():
                     schema:
                         id: Products
                         properties:
-                            product_id:
+                            pid:
                                 type: integer
                                 description: Product's unique id
                             name:
@@ -323,3 +392,10 @@ def init_db():
     """ Initializes the SQLAlchemy app """
     Shopcart.init_db()
     Product.seed_db()
+
+def to_new_format(products):
+    prods =[]
+    if products:
+        for pid,q in products.items():
+            prods.append({'pid':pid,'quantity':q})
+    return prods

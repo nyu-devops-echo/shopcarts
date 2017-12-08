@@ -95,8 +95,8 @@ class TestShopcart(unittest.TestCase):
         shopcart = Shopcart(1, None)
         self.assertEqual(type(shopcart.products), InstrumentedList)
 
-        # initializing empty dict
-        shopcart = Shopcart(1, {})
+        # initializing empty list
+        shopcart = Shopcart(1, [])
         self.assertEqual(type(shopcart.products), InstrumentedList)
 
         # Passing just a product id
@@ -104,7 +104,7 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual(type(shopcart.products), InstrumentedList)
 
         # A dictionary of products
-        shopcart = Shopcart(1, {1:3, 2:8, 3:21})
+        shopcart = Shopcart(1, [{"pid":1, "quantity":3}, {"pid":2, "quantity":8}, {"pid":3, "quantity":21}])
         self.assertEqual(type(shopcart.products), InstrumentedList)
 
     def test_initializing_with_products(self):
@@ -119,7 +119,7 @@ class TestShopcart(unittest.TestCase):
         self.assertEqual(shopcart.products[0].quantity, 1)
 
         # Creating a valid dictionary
-        shopcart = Shopcart(0, {1:7, 2:21, 3:55})
+        shopcart = Shopcart(0, [{"pid":1, "quantity":7}, {"pid":2, "quantity":21}, {"pid":3, "quantity":55}])
         self.assertEqual(len(shopcart.products), 3)
         self.assertEqual(shopcart.products[0].quantity, 7)
         self.assertEqual(shopcart.products[1].quantity, 21)
@@ -163,10 +163,10 @@ class TestShopcart(unittest.TestCase):
 
     def test_adding_a_product_that_already_exists(self):
         """ Test to add a product that exists in a cart """
-        shopcart = Shopcart(7, {1: 5})
+        shopcart = Shopcart(7, [{"pid": 1, "quantity": 5}])
         shopcart.save()
 
-        shopcart.add_product(1, 5)
+        shopcart.add_product(1,5)
 
         self.assertEqual(shopcart.products[0].quantity, 10)
 
@@ -182,11 +182,11 @@ class TestShopcart(unittest.TestCase):
 
         # Adding product 21.5
         with self.assertRaises(DataValidationError):
-            s.add_product(21.5)
+            s.add_product([{"pid": 21.5}])
 
         # Adding a second error
         with self.assertRaises(DataValidationError):
-            s.add_product(1, 0.5)
+            s.add_product([{"pid": 1, "quantity": 0.5}])
 
     def test_get_all_shopcarts(self):
         """ Test All Shopcarts Can Be Retrieved """
@@ -235,7 +235,7 @@ class TestShopcart(unittest.TestCase):
 
     def test_delete_products_from_shopcart(self):
         """ Test a product in a shopcart can be deleted """
-        cart = Shopcart(1, {1: 2, 5: 7})
+        cart = Shopcart(1, [{"pid":1, "quantity":2}, {"pid":5, "quantity":7}])
         cart.save()
         cart.delete_product(5)
         self.assertEqual(len(cart.products), 1)
@@ -244,16 +244,16 @@ class TestShopcart(unittest.TestCase):
         """ Test empty shopcarts are pruned """
         Shopcart(1).save()
         Shopcart(2).save()
-        Shopcart(3, {5 : 7}).save()
+        Shopcart(3, [{"pid":5, "quantity":7}]).save()
 
         Shopcart.prune()
 
         self.assertEqual(len(Shopcart.all()), 1)
 
     def test_get_shopcarts_with_a_specific_product(self):
-        Shopcart(1, {1: 7, 2: 5}).save()
-        Shopcart(2, {3: 1}).save()
-        Shopcart(3, {4: 1, 5: 4, 1: 3}).save()
+        Shopcart(1,  [{"pid":1, "quantity":7}, {"pid":2, "quantity":5}]).save()
+        Shopcart(2, [{"pid":3, "quantity":1}]).save()
+        Shopcart(3, [{"pid":4, "quantity":1}, {"pid":5, "quantity":4},{"pid":1, "quantity":3}]).save()
 
         self.assertEqual(len(Shopcart.all()), 3)
 
@@ -263,10 +263,10 @@ class TestShopcart(unittest.TestCase):
 
     def test_add_multiple_products(self):
         """ Add multiple products to an existing cart """
-        cart = Shopcart(1, {1: 1})
+        cart = Shopcart(1, [{"pid":1, "quantity":1}])
         cart.save()
 
-        cart.add_products({1: 2, 2: 4})
+        cart.add_products([{"pid":1, "quantity":2}, {"pid":2, "quantity":4}])
 
         self.assertEqual(len(cart.products), 2)
         self.assertEqual(cart.products[0].quantity, 3)
@@ -282,10 +282,10 @@ class TestShopcart(unittest.TestCase):
         """ Try to create a product association to a non-existant product """
         with self.assertRaises(DataValidationError):
             Shopcart.create_product(10)
-    
+
     def test_shopcart_serialization(self):
         """ Test serializing a shopcart """
-        cart = Shopcart(1, {1: 2, 2: 1})
+        cart = Shopcart(1, [{"pid":1, "quantity":2}, {"pid":2, "quantity":1}])
         cart = cart.serialize()
 
         self.assertEqual(cart['user_id'], 1)
