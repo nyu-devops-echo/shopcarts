@@ -230,7 +230,17 @@ def get_products():
 ######################################################################
 @app.route('/shopcarts/reset', methods=['DELETE'])
 def shopcarts_reset():
-    """ Removes all shopcarts from the database """
+    """
+    Reset  Shopcarts
+    This endpoint will remove ALL Shopcarts
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to remove all Shopcarts
+    responses:
+      204:
+        description: All Shopcarts have been removed
+      """
     Shopcart.remove_all()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
