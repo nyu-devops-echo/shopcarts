@@ -37,25 +37,10 @@ Vagrant.configure("2") do |config|
     pip3 install -U pip
     apt-get -y autoremove
     
-    # Install PhantomJS for Selenium browser support
-    echo "\n***********************************"
-    echo " Installing PhantomJS for Selenium"
-    echo "***********************************\n"
-    sudo apt-get install -y libxft-dev libjpeg-dev libxslt1-dev libhyphen-dev
-    # PhantomJS https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-    cd ~
-    export PHANTOM_JS="phantomjs-2.5.0-beta-linux-ubuntu-xenial-x86_64"
-    export PHANTOM_JS_DIR="phantomjs-2.5.0-beta-ubuntu-xenial"
-    wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOM_JS.tar.gz
-    sudo tar xvf $PHANTOM_JS.tar.gz
-    sudo mv $PHANTOM_JS_DIR /usr/local/share
-    sudo ln -sf /usr/local/share/$PHANTOM_JS_DIR/bin/phantomjs /usr/local/bin
-    chmod +x /usr/local/bin/phantomjs
-    rm -f $PHANTOM_JS.tar.gz
-
     # Install Nodejs and NPM 
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
     sudo apt-get install -y nodejs
+    sudo npm install phantomjs
     # Install app dependencies
     cd /vagrant
     sudo pip install -r requirements.txt
@@ -76,7 +61,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "docker" do |d|
     d.pull_images "mariadb"
     d.run "mariadb",
-      args: "--restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root"
+      args: "--restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes"
   end
 
   # Create the database after Docker is running
