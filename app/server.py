@@ -225,6 +225,17 @@ def get_all_shopcarts():
 ######################################################################
 @app.route('/shopcarts/prune', methods=['DELETE'])
 def prune_empty_shopcarts():
+    """
+    Prune all Shopcarts
+    This endpoint will remove all empty Shopcarts (i.e. Shopcarts with no Products)
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to Prune all empty Shopcarts
+    responses:
+      204:
+        description: Shopcarts have been pruned
+      """
     Shopcart.prune()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
