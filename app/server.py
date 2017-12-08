@@ -35,7 +35,20 @@ def get_shopcarts(id):
 def delete_shopcarts(id):
     """
     Delete a Shopcart
-    This endpoint will delete a Shopcart based on the id specified in the path
+    This endpoint will delete a Shopcart based the id specified in the path
+    ---
+    tags:
+      - Shopcarts
+    description: Deletes a Shopcart from the database
+    parameters:
+      - name: id
+        in: path
+        description: ID of Shopcart to delete
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Shopcart deleted
     """
     cart = Shopcart.find(id)
 
@@ -282,6 +295,17 @@ def get_all_shopcarts():
 ######################################################################
 @app.route('/shopcarts/prune', methods=['DELETE'])
 def prune_empty_shopcarts():
+    """
+    Prune all Shopcarts
+    This endpoint will remove all empty Shopcarts (i.e. Shopcarts with no Products)
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to Prune all empty Shopcarts
+    responses:
+      204:
+        description: Shopcarts have been pruned
+      """
     Shopcart.prune()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
@@ -300,7 +324,17 @@ def get_products():
 ######################################################################
 @app.route('/shopcarts/reset', methods=['DELETE'])
 def shopcarts_reset():
-    """ Removes all shopcarts from the database """
+    """
+    Reset  Shopcarts
+    This endpoint will remove ALL Shopcarts
+    ---
+    tags:
+      - Shopcarts
+    description: The Shopcarts endpoint allows you to remove all Shopcarts
+    responses:
+      204:
+        description: All Shopcarts have been removed
+      """
     Shopcart.remove_all()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
