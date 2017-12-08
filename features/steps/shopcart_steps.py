@@ -41,6 +41,8 @@ def step_impl(context, user_id, value):
 def step_impl(context, button):
     button_id = button.lower() + '-btn'
     context.driver.find_element_by_id(button_id).click()
+    # wait = WebDriverWait(context.driver, 10)
+    # wait.until(EC.visibility_of_element_located((By.ID, 'shopcart-header')))
 
 @then(u'I should see Shopcart "{id}" in the results')
 def step_impl(context, id):
@@ -62,8 +64,10 @@ def step_impl(context):
     for row in context.table:
         data = {"user_id": row['user_id']}
         if 'product_id' in context.table.headings:
-            data['products'] = {int(row['product_id']): int(row['quantity'])}
-
+            data['products'] = [{
+                'pid': int( row['product_id']),
+                'quantity': int( row['quantity'])
+            }]
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
         assert context.resp.status_code == 201
