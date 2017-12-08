@@ -65,7 +65,10 @@ def create_shopcart():
 
     # Create the Cart
     products = data['products'] if 'products' in data else None
+
     try:
+        if isinstance(products,dict):
+            products = to_new_format(products)
         cart = Shopcart(user_id, products)
     except DataValidationError as e:
         message = {'error': e.args[0]}
@@ -185,15 +188,21 @@ def add_product(user_id):
       400:
         description: Bad Request (the posted data was not valid)
       """
-
     cart = Shopcart.find(user_id)
 
     if not cart:
         return jsonify("Cart with id '{}' was not found.".format(user_id)), status.HTTP_404_NOT_FOUND
 
     try:
-        cart.add_products(request.get_json())
+        products = request.get_json()
+        if isinstance(products,dict):
+            products = to_new_format(products)
+        
+        print('ADD ')
+        cart.add_products(products)
+        print('tp saving')
         cart.save()
+        print(cart)
     except DataValidationError as e:
         message = {'error': e.args[0]}
         return jsonify(message), status.HTTP_400_BAD_REQUEST
@@ -312,3 +321,10 @@ def init_db():
     """ Initializes the SQLAlchemy app """
     Shopcart.init_db()
     Product.seed_db()
+
+def to_new_format(products):
+    prods =[]
+    if products:
+        for pid,q in products.items():
+            prods.append({'pid':pid,'quantity':q})
+    return prods

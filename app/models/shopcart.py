@@ -43,11 +43,11 @@ class Shopcart(db.Model):
     def add_products(self, products):
         if type(products) != list:
             raise DataValidationError('Invalid products: body of request contained bad or no data')
-        # [{"pid": 1, "quantity": 2}, {"pid": 2, "quantity": 4}]
-        for product in products:
-            if type(product) != dict:
+
+        for p in products:
+            if type(p) != dict:
                 raise DataValidationError('Invalid products: body of request contained bad or no data')
-            self.add_product(product['pid'], product['quantity'])
+            self.add_product( int(p['pid']), p['quantity'])
 
     def add_product(self, pid, quant=1):
         """ Adds a tuple of product, quantity to the product dict """
@@ -94,14 +94,16 @@ class Shopcart(db.Model):
 
     def serialize(self):
         """ Serializes a shopcart into a dictionary """
-        return {
-            "user_id": self.user_id,
-            "products": {
-                product.product.id: {
-                    **product.product.serialize(),
-                    "quantity": product.quantity
-                } for product in self.products}
-        }
+        u_dict = {"user_id": self.user_id,}
+        prods = {"products": {} }
+        for p in self.products:
+            p_dict = { p.product.id: p.product.serialize() }
+            p_dict[p.product.id].update( {"quantity": p.quantity } )
+            prods['products'].update(p_dict)
+        if prods:
+            u_dict.update(prods)
+        
+        return u_dict
 
     @staticmethod
     def init_db():
@@ -142,6 +144,8 @@ class Shopcart(db.Model):
         if products is None:
             return []
 
+        if products == {}:
+            return []
         # Not None
         # Tuple of product, quantity
         if isinstance(products, tuple) and len(products) == 2 and all(isinstance(pq, int) for pq in products):
@@ -158,8 +162,10 @@ class Shopcart(db.Model):
         for item in products:
             if type(item) is not dict:
                 raise DataValidationError("ERROR: Data Validation error\nInvalid format for products")
+        
+   
 
-        return [Shopcart.create_product(obj['pid'], obj['quantity']) for obj in products]
+        return [ Shopcart.create_product(obj['pid'], obj['quantity']) for obj in products ]
 
 
     @staticmethod
