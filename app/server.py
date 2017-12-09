@@ -307,13 +307,15 @@ def add_product(user_id):
       - application/json
     description: The Shopcarts endpoint allows you to add a Product to a Shopcart
     parameters:
-      - name: id
+      - name: user_id
         in: path
         description: ID of Shopcart to retrieve
         type: integer
         required: true
       - in: body
         name: body
+        description: List of products/quantities
+        type: array
         schema:
           id: data
           required:
@@ -326,6 +328,8 @@ def add_product(user_id):
             quantity:
               type: integer
               description: Amount of Product to add
+          description: list of products/quantity to add
+          default: {"pid": 1,"quantity": 10}
     responses:
       200:
         description: Product Added
@@ -381,6 +385,29 @@ def add_product(user_id):
 ######################################################################
 @app.route('/shopcarts/<int:user_id>/products/<int:pid>', methods=['DELETE'])
 def delete_product(user_id, pid):
+    """
+    Delete a product from a Shopcart
+    This endpoint will delete a product from a Shopcart
+    based the user_id  and product_id specified in the path
+    ---
+    tags:
+      - Shopcarts
+    description: Delete a product from a Shopcart
+    parameters:
+      - name: user_id
+        in: path
+        description: ID of Shopcart
+        type: integer
+        required: true
+      - name: pid
+        in: path
+        description: ID of the product
+        type: integer
+        required: true  
+    responses:
+      204:
+        description: Product deleted
+    """
     cart = Shopcart.find(user_id)
     if cart:
         cart.delete_product(pid)
