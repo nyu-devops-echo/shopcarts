@@ -103,7 +103,61 @@ def delete_shopcarts(id):
 ######################################################################
 @app.route('/shopcarts', methods=['POST'])
 def create_shopcart():
-    """Creates a shopcart and saves it to database"""
+    """
+    Create a shopcart
+    This endpoint will create a shopcart based in the data in the body that is posted.
+    ---
+    tags:
+      - Shopcarts
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+          - in: body
+            user: body
+            description: Data for the POST
+            name: body
+            schema:
+              id: data
+              required:
+                - user_id
+                - products
+              properties:
+                user_id:
+                  type: integer
+                  description: Unique id for the user
+                products:
+                  type: dict
+                  description: list of dictionaries with products and quantities to add.
+                  default: [{'pid':1, 'quantity':2},{'pid':3, 'quantity':4} ]
+    responses:
+      201:
+        description: Shopcart created
+        schema:
+          properties:
+            user_id:
+              type: integer
+              description: user id
+              default: 1
+            products:
+              type: dict
+              description: products in the shopcart
+              required: true
+              default: {
+                "2": {
+                  "description": "Stationery",
+                  "id": 2,
+                  "name": "Pen",
+                  "price": 3.4,
+                  "quantity": 1
+                }
+              }
+      400:
+        description: POST needs a valid user id
+      409:
+        description: Shopcart for that user already exits
+    """
     data = request.get_json()
     try:
         user_id = data['user_id']
