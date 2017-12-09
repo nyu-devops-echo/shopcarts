@@ -140,9 +140,72 @@ def create_shopcart():
 @app.route('/shopcarts/<int:user_id>/products/<int:pid>', methods=['PUT'])
 def update_shopcart(user_id, pid):
     """
-    Update a Shopcart
-    This endpoint will update a Shopcart based the body that is posted
-    """
+    Update a Product in a given Shopcart
+    This endpoint will update a Product in a given Shopcart based on the data in the body that is posted
+    ---
+    tags:
+      - Shopcarts
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    description: The Shopcarts endpoint allows you to update a Product from a Shopcart
+    parameters:
+      - name: user_id
+        in: path
+        description: ID of Shopcart to retrieve
+        type: integer
+        required: true
+      - name: pid
+        in: path
+        description: ID of product to update
+        type: integer
+        required: true  
+      - in: body
+        name: body
+        description: quantity to update
+        type: body
+        schema:
+          id: dict
+          properties:
+            quantity:
+              type: integer
+          default: {"quantity": 10}
+    responses:
+      200:
+        description: Product updated
+        schema:
+          type: array
+          items:
+            schema:
+              id: Shopcarts
+              properties:
+                user_id:
+                  type: integer
+                  description: Shopcart's unique ID associated with a user
+                products:
+                  type: array
+                  items:
+                    schema:
+                        id: Products
+                        properties:
+                            product_id:
+                                type: integer
+                                description: Product's unique id
+                            name:
+                                type: string
+                                description: Name of the product
+                            price:
+                                type: integer
+                                description: Cost of the product
+                            description:
+                                type: string
+                                description: Description of the product
+      400:
+        description: Bad Request (the posted data needs a quantity)
+      404:
+        description: Bad Request (the shopcart or product  was not found)
+      """
     check_content_type('application/json')
     cart = Shopcart.find(user_id)
 
