@@ -74,7 +74,7 @@ export default {
     return {
       loading: false,
       cart: { products: {}},
-      addedProducts: {}
+      addedProducts: []
     }
   },
 
@@ -119,7 +119,7 @@ export default {
       axios.post(`/shopcarts/${this.userId}/products`, this.addedProducts)
         .then(() => {
           this.loadCart();
-          this.addedProducts = {};
+          this.addedProducts = [];
         });
     },
 
