@@ -5,10 +5,10 @@
       </a>
     </div>
     <div class="card-body" v-show="show">
-      <div class="form-group row" v-for="product in products">
+      <div class="form-group row" v-for="product in products" :key="product.id">
         <label :for="`product-${product.id}`" class="col-sm col-form-label col-form-label-sm">{{ product.name }}</label>
         <div class="col-sm">
-          <input type="number" class="form-control" :id="`product-${product.id}-select`" v-model="value[product.id]" placeholder="0" @change="updateProducts"/>
+          <input type="number" class="form-control" :id="`product-${product.id}-select`" placeholder="0" @input="updateProducts" :data-pid="product.id"/>
         </div>
       </div>
 
@@ -28,22 +28,29 @@ export default {
     },
 
     value: {
-      type: Object,
+      type: Array,
       required: true
     } 
   },
 
   data() {
     return {
-      show: false
+      show: false,
+      selected: []
     }
   },
 
   methods: {
-    updateProducts() {
-      for (let productId in this.value) {
-        this.value[productId] = parseInt(this.value[productId]);
-      }
+    updateProducts($event) {
+      const pid = $event.target.dataset.pid;
+      const quantity = $event.target.value;
+      
+      this.selected[pid-1] = {
+        pid: parseInt(pid),
+        quantity: parseInt(quantity)
+      };
+
+      this.$emit('input', this.selected.filter(x => x));
     }
   }
 }

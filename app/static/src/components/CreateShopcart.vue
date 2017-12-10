@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       user_id: null,
-      addedProducts: {},
+      addedProducts: [],
       error: ''
     }
   },
@@ -53,7 +53,7 @@ export default {
       .then(response => {
         this.$emit('created');
         this.user_id = null;
-        this.addedProducts = {};
+        this.addedProducts = [];
       })
       .catch(error => {
         this.error = "Status Code: " + error.response.status + ". ";
