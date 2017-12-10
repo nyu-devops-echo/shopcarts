@@ -116,7 +116,11 @@ def step_impl(context, quantity, product_id):
 
 @when(u'I have "{quantity}" Shopcarts in the results')
 def step_impl(context, quantity):
+    wait = WebDriverWait(context.driver, 10)
+    wait.until(EC.visibility_of_element_located((By.ID, 'shopcarts-table-list')))
+    
     element = context.driver.find_element_by_id('shopcarts-table-list')
+    
     assert len(element.find_elements_by_css_selector('tbody > tr')) == int(quantity)
 
 @then(u'I should have "{quantity}" Shopcarts in the results')
