@@ -9,8 +9,13 @@ BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
 
 def before_all(context):
     """ Executed once before all tests """
-    context.driver = webdriver.PhantomJS()
-    context.driver.set_window_size(1120, 550)
+    # Set headless chrome options
+    options = webdriver.ChromeOptions()
+    options.binary_location = '/usr/bin/chromium-browser'
+    options.set_headless()
+
+    # Use path of chromedriver from apt-get
+    context.driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=options)
 
     # Polls the DOM if an element is not immediately available
     context.driver.implicitly_wait(5)
