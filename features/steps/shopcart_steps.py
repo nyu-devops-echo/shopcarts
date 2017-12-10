@@ -24,6 +24,8 @@ def step_impl(context, message):
 @then(u'I should see "{user_id}" in the results')
 def step_impl(context, user_id):
     row = 'shopcart-' + user_id + '-row'
+    wait = WebDriverWait(context.driver, 10)
+    wait.until(EC.visibility_of_element_located((By.ID, row)))
     assert user_id in context.driver.find_element_by_id( row).text
 
 @then(u'I should not see "{message}"')
@@ -101,6 +103,8 @@ def step_impl(context, message):
 
 @when(u'I add "{quantity}" of Product "{product_id}" to the cart')
 def step_impl(context, quantity, product_id):
+    wait = WebDriverWait(context.driver, 10)
+    wait.until(EC.visibility_of_element_located((By.ID, 'product-' + product_id + '-select' )))
     element = context.driver.find_element_by_id('product-' + product_id + '-select' )
     element.clear()
     element.send_keys(int(quantity))
@@ -112,7 +116,11 @@ def step_impl(context, quantity, product_id):
 
 @when(u'I have "{quantity}" Shopcarts in the results')
 def step_impl(context, quantity):
+    wait = WebDriverWait(context.driver, 10)
+    wait.until(EC.visibility_of_element_located((By.ID, 'shopcarts-table-list')))
+    
     element = context.driver.find_element_by_id('shopcarts-table-list')
+    
     assert len(element.find_elements_by_css_selector('tbody > tr')) == int(quantity)
 
 @then(u'I should have "{quantity}" Shopcarts in the results')
@@ -131,7 +139,7 @@ def step_impl(context, product_name):
         if option.text == product_name:
             option.click()
             break
-    
+
 @when(u'I update product "{product_id}" to quantity "{quantity}"')
 def step_impl(context, product_id, quantity):
     element = context.driver.find_element_by_id('shopcart-product-' + product_id + '-quantity')

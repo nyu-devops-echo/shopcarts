@@ -4,10 +4,7 @@ from app import app, db
 from app.models.product import Product
 from app.models.shopcart import Shopcart
 
-if 'TRAVIS' in os.environ:
-    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/shopcarts_test')
-else:
-    DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:root@localhost:3306/shopcarts_test')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:@localhost:3306/shopcarts_test')
 
 class TestProduct(unittest.TestCase):
     """ Product Model Tests """

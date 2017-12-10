@@ -5,6 +5,7 @@ applications:
   domain: mybluemix.net
   name: nyu-shopcart-service-f17
   host: nyu-shopcart-service-f17
+  buildpack: python_buildpack
   disk_quota: 512M
   services:
   - MySQL

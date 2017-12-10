@@ -40,15 +40,9 @@ def get_database_uri():
         hostname = creds["hostname"]
         port = creds["port"]
         name = creds["name"]
-    elif 'TRAVIS' in os.environ:
-        username = 'root'
-        password = ''
-        hostname = 'localhost'
-        port = '3306'
-        name = 'shopcarts'
     else:
         username = 'root'
-        password = 'root'
+        password = ''
         hostname = 'localhost'
         port = '3306'
         name = 'shopcarts'

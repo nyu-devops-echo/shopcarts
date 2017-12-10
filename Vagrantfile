@@ -48,18 +48,12 @@ Vagrant.configure("2") do |config|
   # Add Chrome and Chromedriver
   ######################################################################
   config.vm.provision "shell", inline: <<-SHELL
-    # Install Chrome and chromedriver for Selenium browser support
-    apt-get install -y unzip
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    dpkg -i google-chrome*.deb
-    apt-get -f install -y
+    # Install chromium and chromedriver for Selenium browser support
+    sudo apt-get install -y unzip libgconf-2-4
+    sudo apt-get install -y chromium-browser
     wget -N http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip
-    unzip chromedriver_linux64.zip
-    chmod +x chromedriver
-    mv -f chromedriver /usr/local/share/chromedriver
-    ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
-    ln -s /usr/local/share/chromedriver /usr/bin/chromedriver
-    apt-get update
+    unzip chromedriver_linux64.zip -d bin
+    export PATH=$(pwd)/bin:$PATH
   SHELL
 
   ######################################################################
@@ -75,7 +69,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "docker" do |d|
     d.pull_images "mariadb"
     d.run "mariadb",
-      args: "--restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root"
+      args: "--restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes"
   end
 
   # Create the database after Docker is running
