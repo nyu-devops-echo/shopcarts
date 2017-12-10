@@ -14,8 +14,7 @@ def before_all(context):
     options.binary_location = '/usr/bin/chromium-browser'
     options.set_headless()
 
-    # Use path of chromedriver from apt-get
-    context.driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=options)
+    context.driver = webdriver.Chrome(chrome_options=options)
 
     # Polls the DOM if an element is not immediately available
     context.driver.implicitly_wait(5)

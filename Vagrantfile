@@ -49,8 +49,11 @@ Vagrant.configure("2") do |config|
   ######################################################################
   config.vm.provision "shell", inline: <<-SHELL
     # Install chromium and chromedriver for Selenium browser support
+    sudo apt-get install -y unzip libgconf-2-4
     sudo apt-get install -y chromium-browser
-    sudo apt-get install chromium-chromedriver
+    wget -N http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip
+    unzip chromedriver_linux64.zip -d bin
+    export PATH=$(pwd)/bin:$PATH
   SHELL
 
   ######################################################################
