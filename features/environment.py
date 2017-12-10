@@ -13,6 +13,7 @@ def before_all(context):
     options = webdriver.ChromeOptions()
     options.binary_location = '/usr/bin/chromium-browser'
     options.set_headless()
+    options.add_argument('--no-sandbox')
 
     context.driver = webdriver.Chrome(chrome_options=options)
 
