@@ -65,7 +65,7 @@ def get_shopcarts(user_id):
         message = cart.serialize()
         rc = status.HTTP_200_OK
     else:
-        message = {'error' : 'Shopcart with id: %s was not found' % str(id)}
+        message = {'error' : 'Shopcart with id: %s was not found' % str(user_id)}
         rc = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), rc
@@ -188,7 +188,7 @@ def create_shopcart():
     # If correct save it and return object
     cart.save()
     message = cart.serialize()
-    location_url = url_for('get_shopcarts', id=int(cart.user_id), _external=True)
+    location_url = url_for('get_shopcarts', user_id=int(cart.user_id), _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED, {'Location': location_url})
 
 ######################################################################
