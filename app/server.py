@@ -16,8 +16,8 @@ def index():
 ######################################################################
 # RETRIEVE A SHOPCART
 ######################################################################
-@app.route('/shopcarts/<int:id>', methods=['GET'])
-def get_shopcarts(id):
+@app.route('/shopcarts/<int:user_id>', methods=['GET'])
+def get_shopcarts(user_id):
     """
     Get a Shopcart
     This endpoint will get a shopcart.
@@ -27,10 +27,11 @@ def get_shopcarts(id):
     produces:
       - application/json
     parameters:
-      - name: id
+      - name: user_id
         in: path
         description: User id shopcart to retrieve
         type: integer
+        minimum: 1
         required: true
     responses:
       200:
@@ -38,7 +39,7 @@ def get_shopcarts(id):
         schema:
           id: Shopcart
           properties:
-            id:
+            user_id:
               type: integer
               description: user id
               required: true
@@ -59,12 +60,12 @@ def get_shopcarts(id):
       404:
         description: Shopcart not found
     """
-    cart = Shopcart.find(id)
+    cart = Shopcart.find(user_id)
     if cart:
         message = cart.serialize()
         rc = status.HTTP_200_OK
     else:
-        message = {'error' : 'Shopcart with id: %s was not found' % str(id)}
+        message = {'error' : 'Shopcart with id: %s was not found' % str(user_id)}
         rc = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), rc
@@ -72,8 +73,8 @@ def get_shopcarts(id):
 ######################################################################
 # DELETE A SHOPCART
 ######################################################################
-@app.route('/shopcarts/<int:id>', methods=['DELETE'])
-def delete_shopcarts(id):
+@app.route('/shopcarts/<int:user_id>', methods=['DELETE'])
+def delete_shopcarts(user_id):
     """
     Delete a Shopcart
     This endpoint will delete a Shopcart based the id specified in the path
@@ -82,7 +83,8 @@ def delete_shopcarts(id):
       - Shopcarts
     description: Deletes a Shopcart from the database
     parameters:
-      - name: id
+      - name: user_id
+        minimum: 1
         in: path
         description: ID of Shopcart to delete
         type: integer
@@ -91,7 +93,7 @@ def delete_shopcarts(id):
       204:
         description: Shopcart deleted
     """
-    cart = Shopcart.find(id)
+    cart = Shopcart.find(user_id)
 
     if cart:
         cart.delete()
@@ -126,7 +128,9 @@ def create_shopcart():
               properties:
                 user_id:
                   type: integer
+                  minimum: 1
                   description: Unique id for the user
+                  default: 1
                 products:
                   type: dict
                   description: list of dictionaries with products and quantities to add.
@@ -138,6 +142,7 @@ def create_shopcart():
           properties:
             user_id:
               type: integer
+              minimum: 1
               description: user id
               default: 1
             products:
@@ -183,7 +188,7 @@ def create_shopcart():
     # If correct save it and return object
     cart.save()
     message = cart.serialize()
-    location_url = url_for('get_shopcarts', id=int(cart.user_id), _external=True)
+    location_url = url_for('get_shopcarts', user_id=int(cart.user_id), _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED, {'Location': location_url})
 
 ######################################################################
@@ -207,12 +212,13 @@ def update_shopcart(user_id, pid):
         in: path
         description: ID of Shopcart to retrieve
         type: integer
+        minimum: 1
         required: true
       - name: pid
         in: path
         description: ID of product to update
         type: integer
-        required: true  
+        required: true
       - in: body
         name: body
         description: quantity to update
@@ -309,6 +315,7 @@ def add_product(user_id):
         in: path
         description: ID of Shopcart to retrieve
         type: integer
+        minimum: 1
         required: true
       - in: body
         name: body
@@ -393,12 +400,13 @@ def delete_product(user_id, pid):
         in: path
         description: ID of Shopcart
         type: integer
+        minimum: 1
         required: true
       - name: pid
         in: path
         description: ID of the product
         type: integer
-        required: true  
+        required: true
     responses:
       204:
         description: Product deleted
